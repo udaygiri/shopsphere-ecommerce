@@ -7,7 +7,7 @@ A full-stack role-based e-commerce application built with **FastAPI** (Python) a
 ## 🛠️ Tech Stack
 
 - **Backend:** FastAPI (Python 3.12+), SQLAlchemy 2.0, Alembic, Pydantic v2, Uvicorn
-- **Frontend:** React.js (Vite, CSS Modules / Modern CSS)
+- **Frontend:** React.js (Vite, Tailwind CSS)
 - **Database:** SQLite (local development), PostgreSQL (production)
 - **Authentication:** JWT (JSON Web Tokens) with Role-Based Access Control (RBAC)
 - **Third-Party Services:**
