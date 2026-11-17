@@ -24,7 +24,9 @@ A full-stack role-based e-commerce application built with **FastAPI** (Python) a
 │   ├── app/
 │   │   ├── __init__.py
 │   │   └── main.py          # FastAPI application entrypoint & healthcheck
-│   ├── requirements.txt     # Python dependencies
+│   ├── pyproject.toml       # uv project dependencies & configuration
+│   ├── uv.lock              # Reproducible dependency lockfile
+│   ├── requirements.txt     # Standard requirements reference
 │   └── .env.example         # Backend environment variables template
 ├── frontend/
 │   ├── public/              # Static public assets
@@ -45,28 +47,25 @@ A full-stack role-based e-commerce application built with **FastAPI** (Python) a
 - Python 3.12+ and `uv` (fast Python package manager)
 - Node.js 18+ and `npm`
 
-### 2. Backend Setup
+### 2. Backend Setup (Powered by uv)
 ```bash
 # Navigate to backend
 cd backend
 
-# Create & activate a virtual environment
-# Note: If running on an exFAT filesystem drive, create the venv in ~/.venvs:
-uv venv ~/.venvs/ecommerce-backend --python 3.12
-source ~/.venvs/ecommerce-backend/bin/activate
-
-# Install dependencies
-uv pip install -r requirements.txt
-
 # Create your .env file
 cp .env.example .env
 
-# Run FastAPI dev server
-uvicorn app.main:app --reload --port 8000
+# Sync dependencies using uv
+uv sync
+
+# Run FastAPI dev server directly with uv
+uv run uvicorn app.main:app --reload --port 8000
 ```
 - API Base: `http://localhost:8000`
 - Interactive Swagger Docs: `http://localhost:8000/docs`
 - Healthcheck: `http://localhost:8000/api/health`
+
+> **Note on exFAT Drive:** `UV_PROJECT_ENVIRONMENT=/home/bapu/.venvs/ecommerce-backend` is configured in your shell profile so `uv run`, `uv add`, and `uv sync` manage the environment seamlessly without symlink errors.
 
 ### 3. Frontend Setup
 ```bash
