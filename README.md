@@ -26,7 +26,6 @@ A full-stack role-based e-commerce application built with **FastAPI** (Python) a
 │   │   └── main.py          # FastAPI application entrypoint & healthcheck
 │   ├── pyproject.toml       # uv project dependencies & configuration
 │   ├── uv.lock              # Reproducible dependency lockfile
-│   ├── requirements.txt     # Standard requirements reference
 │   └── .env.example         # Backend environment variables template
 ├── frontend/
 │   ├── public/              # Static public assets
