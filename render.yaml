@@ -30,11 +30,5 @@ services:
         sync: false # Render dashboard prompts for your test Razorpay key
       - key: RAZORPAY_KEY_SECRET
         sync: false # Render dashboard prompts for your Razorpay secret
-      - key: CLOUDINARY_CLOUD_NAME
-        sync: false
-      - key: CLOUDINARY_API_KEY
-        sync: false
-      - key: CLOUDINARY_API_SECRET
-        sync: false
       - key: FRONTEND_URL
         sync: false # Set to your Vercel deployment URL (e.g. https://shopsphere.vercel.app)
