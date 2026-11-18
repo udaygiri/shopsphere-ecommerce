@@ -12,8 +12,10 @@ from app.routers import auth, categories, products, cart, orders, payments
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Auto-create tables on startup (convenient for local dev & SQLite)
+    # 1. Auto-create database tables on startup (SQLite & PostgreSQL)
     Base.metadata.create_all(bind=engine)
+
+    # 2. Schema compatibility check for existing databases
     try:
         with engine.connect() as conn:
             inspector = inspect(engine)
@@ -25,6 +27,43 @@ async def lifespan(app: FastAPI):
             conn.commit()
     except Exception:
         pass
+
+    # 3. Auto-seed initial demo users if the database has ZERO users
+    try:
+        from sqlalchemy import select
+        from app.core.database import SessionLocal
+        from app.core.security import get_password_hash
+        from app.models.user import User, UserRole
+
+        with SessionLocal() as db:
+            any_user = db.scalar(select(User.id).limit(1))
+            if not any_user:
+                demo_users = [
+                    User(
+                        email="admin@demo.com",
+                        hashed_password=get_password_hash("password123"),
+                        full_name="Platform Admin",
+                        role=UserRole.ADMIN,
+                    ),
+                    User(
+                        email="seller@demo.com",
+                        hashed_password=get_password_hash("password123"),
+                        full_name="Demo Seller",
+                        role=UserRole.SELLER,
+                    ),
+                    User(
+                        email="customer@demo.com",
+                        hashed_password=get_password_hash("password123"),
+                        full_name="Demo Customer",
+                        role=UserRole.CUSTOMER,
+                    ),
+                ]
+                db.add_all(demo_users)
+                db.commit()
+                print("✨ First-run setup: Initial demo users provisioned (admin, seller, customer).")
+    except Exception as e:
+        print(f"Startup user seeding skipped: {e}")
+
     yield
 
 
