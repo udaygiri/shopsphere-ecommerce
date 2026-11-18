@@ -9,6 +9,7 @@ import {
   Loader2,
   Sparkles,
   ArrowUpDown,
+  SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -37,9 +38,20 @@ export const Storefront = () => {
   // Filters state
   const selectedCategory = searchParams.get('category') || '';
   const searchKeyword = searchParams.get('search') || '';
+  const minPrice = searchParams.get('min_price') || '';
+  const maxPrice = searchParams.get('max_price') || '';
+
+  const [inputMinPrice, setInputMinPrice] = useState(minPrice);
+  const [inputMaxPrice, setInputMaxPrice] = useState(maxPrice);
   const [sortBy, setSortBy] = useState('newest'); // newest, price-low, price-high
   const [page, setPage] = useState(1);
   const pageSize = 12;
+
+  // Keep local price inputs in sync with URL searchParams
+  useEffect(() => {
+    setInputMinPrice(minPrice);
+    setInputMaxPrice(maxPrice);
+  }, [minPrice, maxPrice]);
 
   // 1. Fetch categories for filter pills
   useEffect(() => {
@@ -54,7 +66,7 @@ export const Storefront = () => {
     fetchCategories();
   }, []);
 
-  // 2. Fetch products whenever category, search, or page changes
+  // 2. Fetch products whenever category, search, price range, or page changes
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
@@ -69,6 +81,12 @@ export const Storefront = () => {
       if (searchKeyword.trim()) {
         params.search = searchKeyword.trim();
       }
+      if (minPrice) {
+        params.min_price = Number(minPrice);
+      }
+      if (maxPrice) {
+        params.max_price = Number(maxPrice);
+      }
 
       const res = await api.get('/products', { params });
       setProducts(res.data);
@@ -77,7 +95,7 @@ export const Storefront = () => {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, searchKeyword, page, toastError]);
+  }, [selectedCategory, searchKeyword, minPrice, maxPrice, page, toastError]);
 
   useEffect(() => {
     fetchProducts();
@@ -92,6 +110,34 @@ export const Storefront = () => {
     } else {
       newParams.set('category', catId);
     }
+    setSearchParams(newParams);
+  };
+
+  // Handle Price Filter Form Submit
+  const handleApplyPriceFilter = (e) => {
+    e.preventDefault();
+    setPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    if (inputMinPrice.trim() !== '') {
+      newParams.set('min_price', inputMinPrice.trim());
+    } else {
+      newParams.delete('min_price');
+    }
+    if (inputMaxPrice.trim() !== '') {
+      newParams.set('max_price', inputMaxPrice.trim());
+    } else {
+      newParams.delete('max_price');
+    }
+    setSearchParams(newParams);
+  };
+
+  const handleClearPriceFilter = () => {
+    setInputMinPrice('');
+    setInputMaxPrice('');
+    setPage(1);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('min_price');
+    newParams.delete('max_price');
     setSearchParams(newParams);
   };
 
@@ -187,38 +233,87 @@ export const Storefront = () => {
       {/* Filter and Control Bar */}
       <div className="flex flex-col gap-4">
         
-        {/* Category Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-          <button
-            type="button"
-            onClick={() => handleCategoryClick('')}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
-              !selectedCategory
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
-                : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
-            }`}
-          >
-            All Categories
-          </button>
-          {categories.map((cat) => (
+        {/* Category Pills & Price Filter Row */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          {/* Category Pills */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 lg:pb-0 scrollbar-thin">
             <button
-              key={cat.id}
               type="button"
-              onClick={() => handleCategoryClick(cat.id.toString())}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider shrink-0 transition-all cursor-pointer ${
-                selectedCategory === cat.id.toString()
+              onClick={() => handleCategoryClick('')}
+              className={`px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider shrink-0 transition-all cursor-pointer ${
+                !selectedCategory
                   ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
                   : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
               }`}
             >
-              {cat.name}
+              All Categories
             </button>
-          ))}
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => handleCategoryClick(cat.id.toString())}
+                className={`px-4 py-2 rounded-xl text-xs font-semibold tracking-wider shrink-0 transition-all cursor-pointer ${
+                  selectedCategory === cat.id.toString()
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20'
+                    : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800'
+                }`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Price Range Filter Form */}
+          <form
+            onSubmit={handleApplyPriceFilter}
+            className="flex items-center gap-2 bg-slate-900/80 border border-slate-800/80 rounded-2xl px-3 py-1.5 self-start lg:self-auto shrink-0 shadow-sm"
+          >
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-400" />
+              <span>₹</span>
+            </span>
+            <input
+              type="number"
+              min="0"
+              step="any"
+              placeholder="Min"
+              value={inputMinPrice}
+              onChange={(e) => setInputMinPrice(e.target.value)}
+              className="w-16 sm:w-20 bg-slate-950 text-xs text-white placeholder-slate-500 px-2 py-1 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500"
+            />
+            <span className="text-xs text-slate-500">–</span>
+            <input
+              type="number"
+              min="0"
+              step="any"
+              placeholder="Max"
+              value={inputMaxPrice}
+              onChange={(e) => setInputMaxPrice(e.target.value)}
+              className="w-16 sm:w-20 bg-slate-950 text-xs text-white placeholder-slate-500 px-2 py-1 rounded-lg border border-slate-800 focus:outline-none focus:border-indigo-500"
+            />
+            <button
+              type="submit"
+              className="px-3 py-1 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors cursor-pointer shadow-sm shadow-indigo-600/20"
+            >
+              Filter
+            </button>
+            {(minPrice || maxPrice) && (
+              <button
+                type="button"
+                onClick={handleClearPriceFilter}
+                className="text-xs text-slate-400 hover:text-rose-400 px-1 cursor-pointer"
+                title="Clear price filter"
+              >
+                Reset
+              </button>
+            )}
+          </form>
         </div>
 
         {/* Toolbar: Active Filters, Count & Sort */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-slate-800/80">
-          <div className="flex items-center gap-2 text-sm text-slate-400">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
             {searchKeyword && (
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs">
                 Keyword: "{searchKeyword}"
@@ -229,6 +324,18 @@ export const Storefront = () => {
                     next.delete('search');
                     setSearchParams(next);
                   }}
+                  className="hover:text-white"
+                >
+                  ×
+                </button>
+              </span>
+            )}
+            {(minPrice || maxPrice) && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-indigo-950/80 border border-indigo-800/50 text-indigo-300 text-xs">
+                Price: {minPrice ? `₹${minPrice}` : '₹0'} – {maxPrice ? `₹${maxPrice}` : 'Any'}
+                <button
+                  type="button"
+                  onClick={handleClearPriceFilter}
                   className="hover:text-white"
                 >
                   ×
@@ -268,12 +375,14 @@ export const Storefront = () => {
           <PackageCheck className="w-12 h-12 text-slate-600 mb-3" />
           <h3 className="text-lg font-bold text-slate-200">No products found</h3>
           <p className="text-sm text-slate-400 max-w-sm mt-1 mb-4">
-            We couldn't find any products matching your current category or search criteria.
+            We couldn't find any products matching your current category, search, or price criteria.
           </p>
-          {(selectedCategory || searchKeyword) && (
+          {(selectedCategory || searchKeyword || minPrice || maxPrice) && (
             <button
               type="button"
               onClick={() => {
+                setInputMinPrice('');
+                setInputMaxPrice('');
                 setSearchParams({});
               }}
               className="px-4 py-2 text-xs font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-500 transition-colors"
