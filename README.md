@@ -32,15 +32,12 @@ All demo accounts come pre-configured with active data and full permissions matc
 
 ## 📸 Application Screenshots
 
-| Storefront Catalog & Dynamic Filters | Interactive Shopping Cart & Wishlist |
-| :---: | :---: |
-| ![Storefront](screenshots/storefront.png) | ![Cart & Wishlist](screenshots/cart-wishlist.png) |
+<img width="1302" height="614" alt="image" src="https://github.com/user-attachments/assets/8bb9640d-af62-47f9-b0ec-faa35c93164b" />
+<img width="1302" height="614" alt="image" src="https://github.com/user-attachments/assets/b1402d7a-b5ec-4cde-bee0-9325a95a5189" />
+<img width="1302" height="614" alt="image" src="https://github.com/user-attachments/assets/1d5ba4b6-6636-453a-b2bb-98870299e78d" />
+<img width="1302" height="614" alt="image" src="https://github.com/user-attachments/assets/969bc49d-491a-43b1-8df0-d2bcedfb7411" />
+<img width="1302" height="614" alt="image" src="https://github.com/user-attachments/assets/6abfe9f4-6448-4a51-a9dd-4d7d9f7a971d" />
 
-| Razorpay Test Mode Checkout | Admin Revenue Analytics & Orders Oversight |
-| :---: | :---: |
-| ![Razorpay Checkout](screenshots/razorpay-checkout.png) | ![Admin Dashboard](screenshots/admin-dashboard.png) |
-
-*(Screenshots are stored in the `/screenshots` directory).*
 
 ---
 
@@ -120,8 +117,7 @@ The application was built from the ground up to satisfy 100% of the Lumos Logic 
 ### 2. Technical Architecture & Implementation Details
 * **Strict Backend RBAC:** Authentication is powered by JSON Web Tokens (JWT) signed with `HS256`. A reusable dependency factory `require_role(allowed_roles: list[UserRole])` intercepts incoming requests, validates token integrity, verifies user active status, and rejects unauthorized requests with a clean `403 Forbidden` response before controller logic executes.
 * **Direct Cloudinary Integration:** Rather than burdening the application server with large multipart file payloads, the frontend client uploads product media directly to Cloudinary using an unsigned upload preset. Only the resulting HTTPS `secure_url` is transmitted to the FastAPI backend, ensuring zero local file bloat and high CDN performance.
-* **Cryptographic Payment Integrity & Idempotency:** The Razorpay payment lifecycle strictly isolates order creation from order completion. The backend generates a Razorpay Order ID. Upon checkout completion, the frontend submits the payment signature. The backend calculates:
-  $$\text{expected\_signature} = \text{HMAC-SHA256}(\text{order\_id} + \text{"\|"} + \text{payment\_id}, \text{RAZORPAY\_KEY\_SECRET})$$
+* **Cryptographic Payment Integrity & Idempotency:** The Razorpay payment lifecycle strictly isolates order creation from order completion. The backend generates a Razorpay Order ID. Upon checkout completion, the frontend submits the payment signature. 
   Only when signatures match does the backend execute an atomic database transaction that decrements stock, records the order as `PROCESSING`, and flushes the user's cart. Forged or unverified callbacks are rejected with `400 Bad Request`.
 * **Inventory Stock Consistency:** Order cancellation automatically restores snapshot item quantities back to the product's live stock in an atomic database transaction.
 
