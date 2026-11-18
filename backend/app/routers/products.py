@@ -59,19 +59,27 @@ def get_all_products_admin(
 def get_products(
     category_id: int | None = Query(None, description="Filter products by Category ID"),
     search: str | None = Query(None, description="Search keyword in title or description"),
+    min_price: float | None = Query(None, ge=0, description="Filter by minimum price"),
+    max_price: float | None = Query(None, ge=0, description="Filter by maximum price"),
     skip: int = Query(0, ge=0, description="Number of items to skip"),
     limit: int = Query(20, ge=1, le=100, description="Number of items to fetch (max 100)"),
     db: Session = Depends(get_db),
 ):
     """
     Public storefront endpoint:
-    Lists active products with optional category filtering, case-insensitive keyword search,
-    and offset pagination.
+    Lists active products with optional category filtering, price range filtering,
+    case-insensitive keyword search, and offset pagination.
     """
     stmt = select(Product).where(Product.is_active == True)
 
     if category_id is not None:
         stmt = stmt.where(Product.category_id == category_id)
+
+    if min_price is not None:
+        stmt = stmt.where(Product.price >= min_price)
+
+    if max_price is not None:
+        stmt = stmt.where(Product.price <= max_price)
 
     if search:
         search_filter = f"%{search.strip()}%"

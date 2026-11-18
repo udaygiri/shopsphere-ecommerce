@@ -1,16 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, func
 from sqlalchemy.orm import Session, selectinload, joinedload
 
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_role
 from app.models.user import User, UserRole
+from app.models.product import Product
 from app.models.cart import Cart, CartItem
 from app.models.order import Order, OrderItem, OrderStatus
 from app.schemas.order import (
     OrderCreate,
     OrderStatusUpdate,
     OrderResponse,
+    AdminStatsResponse,
 )
 
 router = APIRouter()
@@ -173,6 +175,65 @@ def get_seller_orders(
             )
         )
     return result
+
+
+@router.get("/admin/stats", response_model=AdminStatsResponse)
+def get_admin_stats(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN])),
+):
+    """
+    Admin-only analytics endpoint:
+    Returns Total Platform Sales (₹ sum of paid orders), Total Orders count,
+    Total Active Products, and Total Registered Users count.
+    """
+    # 1. Total Platform Sales: sum of orders with confirmed payment or active lifecycle (excluding cancelled)
+    total_sales = db.scalar(
+        select(func.coalesce(func.sum(Order.total_amount), 0.0))
+        .where(
+            (Order.razorpay_payment_id.isnot(None) | Order.status.in_([OrderStatus.PROCESSING, OrderStatus.SHIPPED, OrderStatus.DELIVERED])),
+            Order.status != OrderStatus.CANCELLED,
+        )
+    ) or 0.0
+
+    # 2. Total Orders count
+    total_orders = db.scalar(select(func.count(Order.id))) or 0
+
+    # 3. Total Active Products count
+    total_products = db.scalar(
+        select(func.count(Product.id)).where(Product.is_active == True)
+    ) or 0
+
+    # 4. Total Registered Users count
+    total_users = db.scalar(select(func.count(User.id))) or 0
+
+    return AdminStatsResponse(
+        total_sales=round(float(total_sales), 2),
+        total_orders=total_orders,
+        total_products=total_products,
+        total_users=total_users,
+    )
+
+
+@router.get("/admin/all", response_model=list[OrderResponse])
+def get_all_orders_admin(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN])),
+):
+    """
+    Admin-only endpoint:
+    Returns all orders placed across the platform, including customer details
+    and ordered products.
+    """
+    orders = db.scalars(
+        select(Order)
+        .options(
+            joinedload(Order.user),
+            selectinload(Order.items).joinedload(OrderItem.product),
+        )
+        .order_by(Order.created_at.desc())
+    ).all()
+    return orders
 
 
 @router.get("/{id}", response_model=OrderResponse)

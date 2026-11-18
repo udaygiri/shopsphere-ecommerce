@@ -7,7 +7,7 @@ from sqlalchemy import text, inspect
 from app.core.config import settings
 from app.core.database import engine, Base, get_db
 import app.models  # Ensures models are registered with Base metadata
-from app.routers import auth, categories, products, cart, orders, payments
+from app.routers import auth, categories, products, cart, orders, payments, wishlist
 
 
 @asynccontextmanager
@@ -28,7 +28,7 @@ async def lifespan(app: FastAPI):
     except Exception:
         pass
 
-    # 3. Auto-seed initial demo users if the database has ZERO users
+    # 3. Auto-seed initial demo and PDF assessment test users
     try:
         from sqlalchemy import select
         from app.core.database import SessionLocal
@@ -36,31 +36,28 @@ async def lifespan(app: FastAPI):
         from app.models.user import User, UserRole
 
         with SessionLocal() as db:
-            any_user = db.scalar(select(User.id).limit(1))
-            if not any_user:
-                demo_users = [
-                    User(
-                        email="admin@demo.com",
-                        hashed_password=get_password_hash("password123"),
-                        full_name="Platform Admin",
-                        role=UserRole.ADMIN,
-                    ),
-                    User(
-                        email="seller@demo.com",
-                        hashed_password=get_password_hash("password123"),
-                        full_name="Demo Seller",
-                        role=UserRole.SELLER,
-                    ),
-                    User(
-                        email="customer@demo.com",
-                        hashed_password=get_password_hash("password123"),
-                        full_name="Demo Customer",
-                        role=UserRole.CUSTOMER,
-                    ),
-                ]
-                db.add_all(demo_users)
-                db.commit()
-                print("✨ First-run setup: Initial demo users provisioned (admin, seller, customer).")
+            seed_accounts = [
+                # Assessment test credentials
+                ("admin@example.com", "Admin User", UserRole.ADMIN),
+                ("sales@example.com", "Sales User", UserRole.SELLER),
+                ("user@example.com", "Standard Customer", UserRole.CUSTOMER),
+                # Demo accounts
+                ("admin@demo.com", "Platform Admin", UserRole.ADMIN),
+                ("seller@demo.com", "Demo Seller", UserRole.SELLER),
+                ("customer@demo.com", "Demo Customer", UserRole.CUSTOMER),
+            ]
+            for email, full_name, role in seed_accounts:
+                exists = db.scalar(select(User.id).where(User.email == email))
+                if not exists:
+                    db.add(
+                        User(
+                            email=email,
+                            hashed_password=get_password_hash("password123"),
+                            full_name=full_name,
+                            role=role,
+                        )
+                    )
+            db.commit()
     except Exception as e:
         print(f"Startup user seeding skipped: {e}")
 
@@ -98,6 +95,7 @@ app.include_router(products.router, prefix="/api/products", tags=["Products"])
 app.include_router(cart.router, prefix="/api/cart", tags=["Cart"])
 app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
 app.include_router(payments.router, prefix="/api/payments", tags=["Payments"])
+app.include_router(wishlist.router, prefix="/api/wishlist", tags=["Wishlist"])
 
 
 @app.get("/")

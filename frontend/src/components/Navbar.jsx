@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-do
 import {
   ShoppingBag,
   ShoppingCart,
+  Heart,
   Search,
   LogOut,
   Package,
@@ -15,12 +16,14 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import api from '../api/client';
 
 export const Navbar = () => {
   const { user, isAuthenticated, isCustomer, isSeller, isAdmin, logout } = useAuth();
   const { cartCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const { success } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -191,6 +194,22 @@ export const Navbar = () => {
           {/* Right Action Icons */}
           <div className="flex items-center gap-2 sm:gap-3">
             
+            {/* Wishlist Icon (Customer or Guest or Admin) */}
+            {(!isAuthenticated || isCustomer || isAdmin) && (
+              <Link
+                to="/wishlist"
+                className="relative p-2.5 text-slate-300 hover:text-rose-400 rounded-xl hover:bg-slate-900 border border-transparent hover:border-slate-800 transition-all"
+                title="View Wishlist"
+              >
+                <Heart className="w-5 h-5" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow-lg ring-2 ring-slate-950 animate-in zoom-in-50">
+                    {wishlistCount > 99 ? '99+' : wishlistCount}
+                  </span>
+                )}
+              </Link>
+            )}
+
             {/* Cart Icon (Customer or Guest or Admin) */}
             {(!isAuthenticated || isCustomer || isAdmin) && (
               <Link
@@ -243,13 +262,22 @@ export const Navbar = () => {
                     <div className="py-1">
                       {/* Customer / Admin Links */}
                       {(isCustomer || isAdmin) && (
-                        <Link
-                          to="/my-orders"
-                          className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
-                        >
-                          <Package className="w-4 h-4 text-indigo-400" />
-                          My Orders
-                        </Link>
+                        <>
+                          <Link
+                            to="/wishlist"
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          >
+                            <Heart className="w-4 h-4 text-rose-400" />
+                            My Wishlist
+                          </Link>
+                          <Link
+                            to="/my-orders"
+                            className="flex items-center gap-2.5 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/80 transition-colors"
+                          >
+                            <Package className="w-4 h-4 text-indigo-400" />
+                            My Orders
+                          </Link>
+                        </>
                       )}
 
                       {/* Seller / Admin Links */}
@@ -345,12 +373,21 @@ export const Navbar = () => {
                 All Products
               </Link>
               {isAuthenticated && (isCustomer || isAdmin) && (
-                <Link
-                  to="/my-orders"
-                  className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800"
-                >
-                  My Orders
-                </Link>
+                <>
+                  <Link
+                    to="/wishlist"
+                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800 flex items-center gap-2"
+                  >
+                    <Heart className="w-4 h-4 text-rose-400" />
+                    Wishlist ({wishlistCount})
+                  </Link>
+                  <Link
+                    to="/my-orders"
+                    className="px-3 py-2 rounded-lg text-sm font-medium text-slate-200 hover:bg-slate-800"
+                  >
+                    My Orders
+                  </Link>
+                </>
               )}
               {isAuthenticated && (isSeller || isAdmin) && (
                 <Link

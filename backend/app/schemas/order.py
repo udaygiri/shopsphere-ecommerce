@@ -31,6 +31,8 @@ class OrderStatusUpdate(BaseModel):
 class OrderResponse(BaseModel):
     id: int
     user_id: int
+    user_name: Optional[str] = None
+    user_email: Optional[str] = None
     total_amount: float
     status: OrderStatus
     shipping_address: str
@@ -39,5 +41,14 @@ class OrderResponse(BaseModel):
     items: list[OrderItemResponse]
     created_at: datetime
     updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class AdminStatsResponse(BaseModel):
+    total_sales: float
+    total_orders: int
+    total_products: int
+    total_users: int
 
     model_config = ConfigDict(from_attributes=True)

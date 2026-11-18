@@ -67,6 +67,14 @@ class Order(Base):
         lazy="selectin",
     )
 
+    @property
+    def user_name(self) -> str | None:
+        return self.user.full_name if self.user else None
+
+    @property
+    def user_email(self) -> str | None:
+        return self.user.email if self.user else None
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"

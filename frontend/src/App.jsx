@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -12,6 +13,7 @@ import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Cart from './pages/Cart';
+import Wishlist from './pages/Wishlist';
 import Checkout from './pages/Checkout';
 import MyOrders from './pages/MyOrders';
 import SellerDashboard from './pages/SellerDashboard';
@@ -22,42 +24,45 @@ export function App() {
     <ToastProvider>
       <AuthProvider>
         <CartProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Main Application Shell */}
-              <Route path="/" element={<Layout />}>
-                {/* Public Storefront & Product Views */}
-                <Route index element={<Storefront />} />
-                <Route path="products/:id" element={<ProductDetail />} />
-                
-                {/* Authentication Screens */}
-                <Route path="login" element={<Login />} />
-                <Route path="register" element={<Register />} />
+          <WishlistProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Main Application Shell */}
+                <Route path="/" element={<Layout />}>
+                  {/* Public Storefront & Product Views */}
+                  <Route index element={<Storefront />} />
+                  <Route path="products/:id" element={<ProductDetail />} />
+                  
+                  {/* Authentication Screens */}
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
 
-                {/* Shopping Cart (Accessible publicly; enforces customer on checkout) */}
-                <Route path="cart" element={<Cart />} />
+                  {/* Shopping Cart & Wishlist */}
+                  <Route path="cart" element={<Cart />} />
+                  <Route path="wishlist" element={<Wishlist />} />
 
-                {/* Protected Customer Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['customer', 'admin']} />}>
-                  <Route path="checkout" element={<Checkout />} />
-                  <Route path="my-orders" element={<MyOrders />} />
+                  {/* Protected Customer Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['customer', 'admin']} />}>
+                    <Route path="checkout" element={<Checkout />} />
+                    <Route path="my-orders" element={<MyOrders />} />
+                  </Route>
+
+                  {/* Protected Seller / Admin Multi-tenant Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['seller', 'admin']} />}>
+                    <Route path="seller/dashboard" element={<SellerDashboard />} />
+                  </Route>
+
+                  {/* Protected Admin Oversight Routes */}
+                  <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                    <Route path="admin/dashboard" element={<AdminDashboard />} />
+                  </Route>
+
+                  {/* 404 Fallback: Redirect to Storefront */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
                 </Route>
-
-                {/* Protected Seller / Admin Multi-tenant Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['seller', 'admin']} />}>
-                  <Route path="seller/dashboard" element={<SellerDashboard />} />
-                </Route>
-
-                {/* Protected Admin Oversight Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                  <Route path="admin/dashboard" element={<AdminDashboard />} />
-                </Route>
-
-                {/* 404 Fallback: Redirect to Storefront */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+              </Routes>
+            </BrowserRouter>
+          </WishlistProvider>
         </CartProvider>
       </AuthProvider>
     </ToastProvider>
