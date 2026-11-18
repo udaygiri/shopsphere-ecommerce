@@ -46,11 +46,11 @@ export const Login = () => {
   // Demo autofill helper for easy evaluator testing
   const setDemoCredentials = (role) => {
     if (role === 'customer') {
-      setFormData({ email: 'customer1_task5@example.com', password: 'password123' });
+      setFormData({ email: 'customer@demo.com', password: 'password123' });
     } else if (role === 'seller') {
-      setFormData({ email: 'seller1_task5@example.com', password: 'password123' });
+      setFormData({ email: 'seller@demo.com', password: 'password123' });
     } else if (role === 'admin') {
-      setFormData({ email: 'admin_task5@example.com', password: 'password123' });
+      setFormData({ email: 'admin@demo.com', password: 'password123' });
     }
   };
 

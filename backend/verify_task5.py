@@ -100,12 +100,12 @@ def run_tests():
 
     # 1. Setup Personas
     print("\n[STEP 1] Setting Up Test Personas...")
-    s1_token = get_or_create_user("seller1_task5@example.com", "SellerPass1!", "Seller Alpha", "SELLER")
-    s2_token = get_or_create_user("seller2_task5@example.com", "SellerPass2!", "Seller Beta", "SELLER")
-    s3_token = get_or_create_user("seller3_task5@example.com", "SellerPass3!", "Seller Gamma (Unrelated)", "SELLER")
-    c1_token = get_or_create_user("customer1_task5@example.com", "CustomerPass1!", "Charlie Customer", "CUSTOMER")
-    c2_token = get_or_create_user("customer2_task5@example.com", "CustomerPass2!", "Dana Customer", "CUSTOMER")
-    admin_token = get_or_create_user("admin_task5@example.com", "AdminPass1!", "Alice Admin", "ADMIN")
+    s1_token = get_or_create_user("seller1_task5@example.com", "password123", "Seller Alpha", "SELLER")
+    s2_token = get_or_create_user("seller2_task5@example.com", "password123", "Seller Beta", "SELLER")
+    s3_token = get_or_create_user("seller3_task5@example.com", "password123", "Seller Gamma (Unrelated)", "SELLER")
+    c1_token = get_or_create_user("customer1_task5@example.com", "password123", "Charlie Customer", "CUSTOMER")
+    c2_token = get_or_create_user("customer2_task5@example.com", "password123", "Dana Customer", "CUSTOMER")
+    admin_token = get_or_create_user("admin_task5@example.com", "password123", "Alice Admin", "ADMIN")
     print("  ✓ 6 personas ready (Seller 1, Seller 2, Seller 3, Customer 1, Customer 2, Admin)")
 
     # 2. Setup Category & Products
