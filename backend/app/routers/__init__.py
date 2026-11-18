@@ -1,1 +1,3 @@
-# API route packages
+from app.routers import auth, categories, products
+
+__all__ = ["auth", "categories", "products"]

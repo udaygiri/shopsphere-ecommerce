@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
 import enum
 from datetime import datetime, timezone
 from sqlalchemy import Integer, String, Boolean, Enum as SQLEnum, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.core.database import Base
+
+if TYPE_CHECKING:
+    from app.models.product import Product
 
 
 class UserRole(str, enum.Enum):
@@ -34,4 +38,11 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
         nullable=False,
+    )
+
+    # One seller has many products
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
+        back_populates="seller",
+        cascade="all, delete-orphan",
     )
