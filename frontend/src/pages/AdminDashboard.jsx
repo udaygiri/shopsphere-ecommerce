@@ -101,17 +101,22 @@ export const AdminDashboard = () => {
     }
   };
 
-  // Delete Category
+  // Delete Category (Cascades deletion to all related products)
   const handleDeleteCategory = async (catId, name) => {
-    if (!window.confirm(`Are you sure you want to permanently delete category "${name}"?`)) {
+    if (
+      !window.confirm(
+        `Are you sure you want to permanently delete category "${name}"? All related products in this category will also be deleted.`
+      )
+    ) {
       return;
     }
 
     setDeletingCatId(catId);
     try {
       await api.delete(`/categories/${catId}`);
-      success(`Category "${name}" deleted successfully!`);
+      success(`Category "${name}" and all related products were deleted successfully!`);
       fetchCategories();
+      fetchProducts();
     } catch (err) {
       toastError(err.normalizedMessage || 'Failed to delete category');
     } finally {
