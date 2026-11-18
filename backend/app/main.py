@@ -7,7 +7,7 @@ from sqlalchemy import text
 from app.core.config import settings
 from app.core.database import engine, Base, get_db
 import app.models  # Ensures models are registered with Base metadata
-from app.routers import auth, categories, products
+from app.routers import auth, categories, products, cart, orders
 
 
 @asynccontextmanager
@@ -45,6 +45,8 @@ app.add_middleware(
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(categories.router, prefix="/api/categories", tags=["Categories"])
 app.include_router(products.router, prefix="/api/products", tags=["Products"])
+app.include_router(cart.router, prefix="/api/cart", tags=["Cart"])
+app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
 
 
 @app.get("/")

@@ -7,6 +7,8 @@ from app.core.database import Base
 
 if TYPE_CHECKING:
     from app.models.product import Product
+    from app.models.cart import Cart
+    from app.models.order import Order
 
 
 class UserRole(str, enum.Enum):
@@ -44,5 +46,20 @@ class User(Base):
     products: Mapped[list["Product"]] = relationship(
         "Product",
         back_populates="seller",
+        cascade="all, delete-orphan",
+    )
+
+    # One customer has one cart (1-to-1)
+    cart: Mapped["Cart | None"] = relationship(
+        "Cart",
+        back_populates="user",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
+
+    # One customer has many orders
+    orders: Mapped[list["Order"]] = relationship(
+        "Order",
+        back_populates="user",
         cascade="all, delete-orphan",
     )
