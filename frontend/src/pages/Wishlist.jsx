@@ -69,9 +69,9 @@ export const Wishlist = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-        <p className="text-sm text-slate-400">Loading your wishlist...</p>
+      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 bg-white rounded-3xl border border-slate-100 p-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <p className="text-sm font-bold text-slate-600">Loading your wishlist...</p>
       </div>
     );
   }
@@ -79,20 +79,20 @@ export const Wishlist = () => {
   return (
     <div className="space-y-6 pb-12">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-200">
         <div className="flex items-center gap-3">
           <Link
             to="/"
-            className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 shadow-2xs hover:bg-slate-50 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
-              <Heart className="w-6 h-6 text-rose-500 fill-rose-500" />
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+              <Heart className="w-6 h-6 text-red-500 fill-red-500" />
               My Wishlist
             </h1>
-            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
               {wishlist.length} saved {wishlist.length === 1 ? 'item' : 'items'}
             </p>
           </div>
@@ -100,17 +100,17 @@ export const Wishlist = () => {
       </div>
 
       {wishlist.length === 0 ? (
-        <div className="rounded-3xl border border-slate-800 bg-slate-900/40 p-12 text-center max-w-lg mx-auto">
-          <div className="w-16 h-16 rounded-2xl bg-slate-800/80 text-rose-400 flex items-center justify-center mx-auto mb-4 border border-slate-700/50">
+        <div className="rounded-3xl border-2 border-dashed border-slate-200 bg-white p-12 text-center max-w-lg mx-auto shadow-2xs">
+          <div className="w-16 h-16 rounded-full bg-red-50 text-red-500 flex items-center justify-center mx-auto mb-4 border border-red-100">
             <Heart className="w-8 h-8" />
           </div>
-          <h2 className="text-lg font-bold text-white mb-1">Your wishlist is empty</h2>
-          <p className="text-xs sm:text-sm text-slate-400 mb-6">
+          <h2 className="text-xl font-bold text-slate-900 mb-1">Your wishlist is empty</h2>
+          <p className="text-xs sm:text-sm text-slate-500 mb-6 font-medium">
             Save items you love to your wishlist and revisit them anytime.
           </p>
           <Link
             to="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-xs uppercase tracking-wider text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-bold text-xs uppercase tracking-wider text-white bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-600/25 transition-all active:scale-95"
           >
             <Sparkles className="w-4 h-4" />
             Explore Products
@@ -130,39 +130,36 @@ export const Wishlist = () => {
             return (
               <div
                 key={item.id}
-                className="group flex flex-col rounded-2xl bg-slate-900/70 border border-slate-800/80 hover:border-indigo-500/50 hover:shadow-xl hover:shadow-indigo-500/5 transition-all overflow-hidden"
+                className="group flex flex-col rounded-3xl bg-white border border-slate-100 hover:border-blue-300 hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 p-4 sm:p-5 justify-between relative shadow-xs"
               >
                 {/* Product Thumbnail */}
-                <div className="relative aspect-square overflow-hidden bg-slate-950">
-                  <Link to={`/products/${product.id}`}>
+                <div className="relative aspect-square rounded-2xl overflow-hidden bg-slate-50 mb-3">
+                  <Link to={`/products/${product.id}`} className="block w-full h-full p-3 flex items-center justify-center">
                     {product.image_url ? (
                       <img
                         src={product.image_url}
                         alt={product.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-600 gap-2">
-                        <PackageCheck className="w-10 h-10" />
-                        <span className="text-xs">No image</span>
-                      </div>
+                      <PackageCheck className="w-10 h-10 text-slate-300" />
                     )}
                   </Link>
 
                   {/* Stock Badges */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1 pointer-events-none">
+                  <div className="absolute top-2.5 left-2.5 flex flex-col gap-1 pointer-events-none z-10">
                     {isOutOfStock ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-rose-950/90 text-rose-300 border border-rose-800/60 backdrop-blur-md">
-                        <XCircle className="w-3 h-3" /> Out of Stock
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-red-50 text-red-700 border border-red-200">
+                        <XCircle className="w-3 h-3 text-red-600" /> Out of Stock
                       </span>
                     ) : isLowStock ? (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-950/90 text-amber-300 border border-amber-800/60 backdrop-blur-md">
-                        <AlertTriangle className="w-3 h-3" /> Only {product.stock} Left
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200">
+                        <AlertTriangle className="w-3 h-3 text-amber-600" /> Only {product.stock} Left
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-emerald-950/90 text-emerald-300 border border-emerald-800/60 backdrop-blur-md">
-                        <PackageCheck className="w-3 h-3" /> In Stock ({product.stock})
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <PackageCheck className="w-3 h-3 text-emerald-600" /> In Stock
                       </span>
                     )}
                   </div>
@@ -173,10 +170,10 @@ export const Wishlist = () => {
                     onClick={() => handleRemove(product.id)}
                     disabled={isRemoving}
                     title="Remove from wishlist"
-                    className="absolute top-3 right-3 p-2 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 text-rose-400 hover:text-rose-300 hover:bg-rose-500/20 transition-all cursor-pointer shadow-lg"
+                    className="absolute top-2.5 right-2.5 p-2 rounded-full bg-white/95 hover:bg-white border border-slate-100 text-slate-400 hover:text-red-500 transition-all cursor-pointer shadow-sm z-10 hover:scale-105"
                   >
                     {isRemoving ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin text-red-500" />
                     ) : (
                       <Trash2 className="w-4 h-4" />
                     )}
@@ -184,21 +181,21 @@ export const Wishlist = () => {
                 </div>
 
                 {/* Content */}
-                <div className="p-5 flex-1 flex flex-col justify-between">
+                <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <Link
                       to={`/products/${product.id}`}
-                      className="font-semibold text-slate-100 group-hover:text-indigo-400 transition-colors line-clamp-1 text-base"
+                      className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 text-sm block"
                     >
                       {product.title}
                     </Link>
                   </div>
 
                   {/* Price & Action */}
-                  <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                  <div className="mt-3 pt-3 border-t border-slate-100 flex flex-col gap-3">
                     <div>
-                      <span className="text-xs text-slate-500 block">Price</span>
-                      <span className="text-lg font-bold text-white tracking-tight">
+                      <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400 block">Price</span>
+                      <span className="text-base sm:text-lg font-black text-blue-600 tracking-tight">
                         {formatPrice(product.price)}
                       </span>
                     </div>
@@ -207,10 +204,10 @@ export const Wishlist = () => {
                       type="button"
                       onClick={() => handleAddToCart(product)}
                       disabled={isOutOfStock || isAdding}
-                      className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+                      className={`w-full py-2.5 px-4 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                         isOutOfStock
-                          ? 'bg-slate-800 text-slate-500 cursor-not-allowed'
-                          : 'bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white shadow-md shadow-indigo-600/20'
+                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed shadow-none'
+                          : 'bg-blue-600 hover:bg-blue-700 active:scale-95 text-white shadow-md shadow-blue-600/25'
                       }`}
                     >
                       {isAdding ? (

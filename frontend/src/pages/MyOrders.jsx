@@ -52,37 +52,37 @@ export const MyOrders = () => {
     switch (normalized) {
       case 'PENDING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">
-            <Clock className="w-3.5 h-3.5" /> Pending
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+            <Clock className="w-3.5 h-3.5 text-amber-600" /> Pending
           </span>
         );
       case 'PROCESSING':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30">
-            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Processing
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" /> Processing
           </span>
         );
       case 'SHIPPED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/30">
-            <Truck className="w-3.5 h-3.5" /> Shipped
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <Truck className="w-3.5 h-3.5 text-indigo-600" /> Shipped
           </span>
         );
       case 'DELIVERED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-300 border border-emerald-500/30">
-            <CheckCircle2 className="w-3.5 h-3.5" /> Delivered
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Delivered
           </span>
         );
       case 'CANCELLED':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-300 border border-rose-500/30">
-            <RotateCcw className="w-3.5 h-3.5" /> Cancelled
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200">
+            <RotateCcw className="w-3.5 h-3.5 text-red-600" /> Cancelled
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-300">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
             {status}
           </span>
         );
@@ -91,32 +91,32 @@ export const MyOrders = () => {
 
   if (loading) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-        <p className="text-sm text-slate-400">Loading order history...</p>
+      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 bg-white rounded-3xl border border-slate-100 p-12">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <p className="text-sm font-bold text-slate-600">Loading order history...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-6 sm:space-y-8 pb-16">
       
       {/* Header */}
-      <div className="pb-4 border-b border-slate-800">
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Order History</h1>
-        <p className="text-sm text-slate-400 mt-1">Track your past purchases and delivery statuses</p>
+      <div className="pb-4 border-b border-slate-200">
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Order History</h1>
+        <p className="text-sm text-slate-500 mt-0.5 font-medium">Track your past purchases and delivery statuses</p>
       </div>
 
       {orders.length === 0 ? (
-        <div className="min-h-[45vh] flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-slate-800">
-          <ShoppingBag className="w-14 h-14 text-slate-600 mb-4" />
-          <h3 className="text-xl font-bold text-white mb-1">No Orders Placed Yet</h3>
-          <p className="text-sm text-slate-400 max-w-sm mb-6">
+        <div className="min-h-[45vh] flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl border-2 border-dashed border-slate-200 bg-white shadow-2xs">
+          <ShoppingBag className="w-14 h-14 text-slate-300 mb-4" />
+          <h3 className="text-xl font-bold text-slate-900 mb-1">No Orders Placed Yet</h3>
+          <p className="text-sm text-slate-500 max-w-sm mb-6">
             You haven't completed any orders yet. Discover items in the catalog to get started.
           </p>
           <Link
             to="/"
-            className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/20"
+            className="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-md shadow-blue-600/25 active:scale-95"
           >
             Start Shopping
           </Link>
@@ -136,47 +136,47 @@ export const MyOrders = () => {
             return (
               <div
                 key={order.id}
-                className="rounded-3xl bg-slate-900/80 border border-slate-800 overflow-hidden shadow-xl"
+                className="rounded-3xl bg-white border border-slate-100 overflow-hidden shadow-xs hover:shadow-md transition-shadow"
               >
                 {/* Order Summary Top Bar */}
                 <div
                   onClick={() => toggleExpand(order.id)}
-                  className="p-5 sm:p-6 bg-slate-900/60 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-slate-800/40 transition-colors"
+                  className="p-5 sm:p-6 bg-slate-50/70 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4 cursor-pointer hover:bg-blue-50/30 transition-colors"
                 >
                   <div className="flex flex-wrap items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-sm">
+                    <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center font-black text-sm">
                       #{order.id}
                     </div>
 
                     <div>
                       <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="font-bold text-white text-base">Order #{order.id}</span>
+                        <span className="font-extrabold text-slate-900 text-base">Order #{order.id}</span>
                         {getStatusBadge(order.status)}
                         {order.razorpay_payment_id && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                          <span className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                             <span>Paid via Razorpay</span>
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
-                        <Calendar className="w-3.5 h-3.5" />
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                        <Calendar className="w-3.5 h-3.5 text-slate-400" />
                         <span>{dateStr}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-800">
+                  <div className="flex items-center justify-between md:justify-end gap-6 pt-3 md:pt-0 border-t md:border-t-0 border-slate-200">
                     <div>
-                      <span className="text-xs text-slate-400 block">Total Amount</span>
-                      <span className="text-lg font-extrabold text-white">
+                      <span className="text-xs text-slate-400 block uppercase font-bold tracking-wider">Total Amount</span>
+                      <span className="text-xl font-black text-blue-600">
                         {formatPrice(order.total_amount)}
                       </span>
                     </div>
 
                     <button
                       type="button"
-                      className="p-2 rounded-xl bg-slate-800/80 text-slate-400 hover:text-white transition-colors"
+                      className="p-2 rounded-full bg-white border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
                       aria-label="Toggle order details"
                     >
                       {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -186,27 +186,27 @@ export const MyOrders = () => {
 
                 {/* Expanded Details */}
                 {isExpanded && (
-                  <div className="p-5 sm:p-6 space-y-5 border-t border-slate-800/80">
+                  <div className="p-5 sm:p-6 space-y-5 bg-white">
                     
                     {/* Delivery Address */}
-                    <div className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/60 text-xs">
-                      <MapPin className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+                    <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                      <MapPin className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
                       <div>
-                        <span className="font-semibold text-slate-300">Delivery Address: </span>
-                        <span className="text-slate-400">{order.shipping_address}</span>
+                        <span className="font-bold text-slate-900">Delivery Address: </span>
+                        <span className="text-slate-600 font-medium">{order.shipping_address}</span>
                       </div>
                     </div>
 
                     {/* Payment Gateway Reference */}
                     {order.razorpay_payment_id && (
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/60 text-xs">
-                        <div className="flex items-center gap-2 text-slate-300">
-                          <CreditCard className="w-4 h-4 text-indigo-400" />
-                          <span className="text-slate-400">Payment Gateway:</span>
-                          <span className="font-semibold text-white">Razorpay (Test Mode INR ₹)</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+                        <div className="flex items-center gap-2 text-slate-700">
+                          <CreditCard className="w-4 h-4 text-blue-600" />
+                          <span className="text-slate-500">Payment Gateway:</span>
+                          <span className="font-bold text-slate-900">Razorpay (Test Mode INR ₹)</span>
                         </div>
-                        <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
-                          <span className="text-slate-400 font-sans">Payment ID:</span>
+                        <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 font-bold">
+                          <span className="text-slate-500 font-sans font-medium">Payment ID:</span>
                           <span>{order.razorpay_payment_id}</span>
                         </div>
                       </div>
@@ -214,27 +214,27 @@ export const MyOrders = () => {
 
                     {/* Items List */}
                     <div className="space-y-2">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                         Purchased Items ({order.items?.length || 0})
                       </h4>
-                      <div className="divide-y divide-slate-800/60 rounded-2xl bg-slate-950/40 border border-slate-800/60 overflow-hidden">
+                      <div className="divide-y divide-slate-100 rounded-2xl bg-white border border-slate-100 overflow-hidden shadow-2xs">
                         {order.items?.map((item) => (
                           <div
                             key={item.id}
-                            className="p-3.5 flex items-center justify-between gap-4 text-sm"
+                            className="p-4 flex items-center justify-between gap-4 text-sm"
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-8 h-8 rounded-lg bg-indigo-950 border border-indigo-800/50 flex items-center justify-center text-indigo-300 shrink-0">
-                                <Package className="w-4 h-4" />
+                              <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                                <Package className="w-5 h-5" />
                               </div>
                               <div className="min-w-0">
-                                <p className="font-medium text-slate-200 truncate">{item.product_title}</p>
-                                <p className="text-xs text-slate-400">
+                                <p className="font-bold text-slate-900 truncate">{item.product_title}</p>
+                                <p className="text-xs text-slate-500">
                                   Qty: {item.quantity} × {formatPrice(item.unit_price)} snapshot
                                 </p>
                               </div>
                             </div>
-                            <span className="font-bold text-white shrink-0">
+                            <span className="font-black text-slate-900 text-base shrink-0">
                               {formatPrice(item.subtotal)}
                             </span>
                           </div>

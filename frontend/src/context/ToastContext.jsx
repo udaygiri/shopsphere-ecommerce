@@ -33,11 +33,18 @@ export const ToastProvider = ({ children }) => {
       <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0">
         {toasts.map((toast) => {
           const typeStyles = {
-            success: 'bg-emerald-900/90 border-emerald-500/50 text-emerald-100',
-            error: 'bg-rose-900/90 border-rose-500/50 text-rose-100',
-            warning: 'bg-amber-900/90 border-amber-500/50 text-amber-100',
-            info: 'bg-slate-900/90 border-slate-600/50 text-slate-100',
-          }[toast.type] || 'bg-slate-900/90 border-slate-600/50 text-slate-100';
+            success: 'bg-white border-emerald-300 text-emerald-950 shadow-xl shadow-emerald-900/5 ring-1 ring-emerald-500/20',
+            error: 'bg-white border-red-300 text-red-950 shadow-xl shadow-red-900/5 ring-1 ring-red-500/20',
+            warning: 'bg-white border-amber-300 text-amber-950 shadow-xl shadow-amber-900/5 ring-1 ring-amber-500/20',
+            info: 'bg-white border-blue-300 text-slate-900 shadow-xl shadow-blue-900/5 ring-1 ring-blue-500/20',
+          }[toast.type] || 'bg-white border-slate-200 text-slate-900 shadow-xl';
+
+          const iconStyles = {
+            success: 'text-emerald-600',
+            error: 'text-red-600',
+            warning: 'text-amber-500',
+            info: 'text-blue-600',
+          }[toast.type] || 'text-slate-600';
 
           const IconComponent = {
             success: CheckCircle2,
@@ -49,16 +56,16 @@ export const ToastProvider = ({ children }) => {
           return (
             <div
               key={toast.id}
-              className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl border shadow-xl backdrop-blur-md transition-all duration-300 animate-in slide-in-from-bottom-3 ${typeStyles}`}
+              className={`pointer-events-auto flex items-start gap-3 p-4 rounded-2xl border transition-all duration-300 animate-in slide-in-from-bottom-3 ${typeStyles}`}
             >
-              <IconComponent className="w-5 h-5 mt-0.5 shrink-0" />
-              <div className="flex-1 text-sm font-medium leading-snug break-words">
+              <IconComponent className={`w-5 h-5 mt-0.5 shrink-0 ${iconStyles}`} />
+              <div className="flex-1 text-xs sm:text-sm font-bold leading-snug break-words">
                 {toast.message}
               </div>
               <button
                 type="button"
                 onClick={() => removeToast(toast.id)}
-                className="opacity-70 hover:opacity-100 transition-opacity p-0.5 rounded cursor-pointer shrink-0"
+                className="opacity-60 hover:opacity-100 transition-opacity p-0.5 rounded-full hover:bg-slate-100 cursor-pointer shrink-0"
               >
                 <X className="w-4 h-4" />
               </button>

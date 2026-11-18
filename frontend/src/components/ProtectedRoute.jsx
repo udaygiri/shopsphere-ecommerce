@@ -10,8 +10,8 @@ export const ProtectedRoute = ({ allowedRoles, children }) => {
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
-        <p className="text-sm text-slate-400">Verifying authentication session...</p>
+        <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
+        <p className="text-sm font-semibold text-slate-600">Verifying authentication session...</p>
       </div>
     );
   }
@@ -28,13 +28,13 @@ export const ProtectedRoute = ({ allowedRoles, children }) => {
 
   if (!isAuthorized) {
     return (
-      <div className="min-h-[60vh] max-w-md mx-auto px-4 flex flex-col items-center justify-center text-center">
-        <div className="w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center mb-4">
-          <ShieldAlert className="w-8 h-8 text-rose-400" />
+      <div className="min-h-[60vh] max-w-md mx-auto px-4 flex flex-col items-center justify-center text-center bg-white rounded-3xl border border-slate-200 p-8 shadow-sm">
+        <div className="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 flex items-center justify-center mb-4">
+          <ShieldAlert className="w-8 h-8 text-rose-500" />
         </div>
-        <h2 className="text-xl font-bold text-slate-100 mb-2">Access Denied</h2>
-        <p className="text-sm text-slate-400 mb-6">
-          Your account role (<span className="font-semibold text-slate-200 uppercase">{user?.role}</span>) does not have permission to view this page.
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Access Denied</h2>
+        <p className="text-sm text-slate-500 mb-6">
+          Your account role (<span className="font-bold text-slate-800 uppercase">{user?.role}</span>) does not have permission to view this page.
         </p>
         <Navigate to="/" replace />
       </div>

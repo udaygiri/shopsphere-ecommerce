@@ -56,21 +56,21 @@ export const Login = () => {
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center py-10 px-4">
-      <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+      <div className="w-full max-w-md bg-white border border-slate-100 rounded-3xl p-8 sm:p-10 shadow-xl">
         
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 mb-4">
-            <LogIn className="w-6 h-6" />
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/25 mb-4">
+            <LogIn className="w-7 h-7" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Sign In to ShopSphere</h1>
-          <p className="text-sm text-slate-400 mt-1">Enter your credentials to access your account</p>
+          <h1 className="text-2xl font-black tracking-tight text-slate-900">Sign In to ShopSphere</h1>
+          <p className="text-sm text-slate-500 mt-1">Enter your credentials to access your account</p>
         </div>
 
         {/* Error Alert */}
         {errorMsg && (
-          <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
             <p className="leading-snug">{errorMsg}</p>
           </div>
         )}
@@ -78,11 +78,11 @@ export const Login = () => {
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Email Address
             </label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Mail className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="email"
                 name="email"
@@ -90,17 +90,17 @@ export const Login = () => {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full bg-slate-950/80 text-sm text-white placeholder-slate-500 pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                className="w-full bg-slate-50 text-sm text-slate-900 placeholder-slate-400 pl-11 pr-4 py-3 rounded-full border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="password"
                 name="password"
@@ -108,7 +108,7 @@ export const Login = () => {
                 onChange={handleChange}
                 required
                 placeholder="••••••••"
-                className="w-full bg-slate-950/80 text-sm text-white placeholder-slate-500 pl-10 pr-4 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                className="w-full bg-slate-50 text-sm text-slate-900 placeholder-slate-400 pl-11 pr-4 py-3 rounded-full border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all font-medium"
               />
             </div>
           </div>
@@ -116,7 +116,7 @@ export const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-500 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all shadow-lg shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full mt-2 py-3.5 px-6 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all shadow-md shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
           >
             {loading ? (
               <>
@@ -130,30 +130,30 @@ export const Login = () => {
         </form>
 
         {/* Demo Fast Autofill Pills */}
-        <div className="mt-8 pt-6 border-t border-slate-800/80">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             Quick Demo Autofill:
           </p>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => setDemoCredentials('customer')}
-              className="px-2 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/50 transition-colors cursor-pointer"
+              className="px-2 py-2 text-xs font-bold rounded-full bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-200 transition-colors cursor-pointer text-center"
             >
               Customer
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('seller')}
-              className="px-2 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/50 transition-colors cursor-pointer"
+              className="px-2 py-2 text-xs font-bold rounded-full bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-700 border border-slate-200 hover:border-emerald-200 transition-colors cursor-pointer text-center"
             >
               Seller
             </button>
             <button
               type="button"
               onClick={() => setDemoCredentials('admin')}
-              className="px-2 py-1.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-700/50 transition-colors cursor-pointer"
+              className="px-2 py-2 text-xs font-bold rounded-full bg-slate-50 hover:bg-amber-50 text-slate-700 hover:text-amber-700 border border-slate-200 hover:border-amber-200 transition-colors cursor-pointer text-center"
             >
               Admin
             </button>
@@ -161,9 +161,9 @@ export const Login = () => {
         </div>
 
         {/* Switch to Register */}
-        <div className="mt-6 text-center text-sm text-slate-400">
+        <div className="mt-6 text-center text-sm text-slate-500">
           Don't have an account?{' '}
-          <Link to="/register" className="font-semibold text-indigo-400 hover:text-indigo-300">
+          <Link to="/register" className="font-bold text-blue-600 hover:text-blue-700">
             Create an account
           </Link>
         </div>

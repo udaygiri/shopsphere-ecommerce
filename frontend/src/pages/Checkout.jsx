@@ -100,7 +100,7 @@ export const Checkout = () => {
             shipping_address: trimmedAddress,
           },
           theme: {
-            color: '#4f46e5',
+            color: '#2563eb',
           },
           handler: async function (response) {
             await handleVerifyPayment({
@@ -127,7 +127,7 @@ export const Checkout = () => {
         });
         rzp.open();
       } else {
-        // 3. Fallback Test Mode Simulation (for offline dev or when external script is blocked)
+        // 3. Fallback Test Mode Simulation
         setMockModalData({
           order_id: orderData.razorpay_order_id,
           amount_in_rupees: orderData.amount_in_rupees || totalAmount,
@@ -173,15 +173,15 @@ export const Checkout = () => {
 
   if (items.length === 0 && !submitting) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 rounded-3xl border border-dashed border-slate-800">
-        <PackageCheck className="w-12 h-12 text-slate-600 mb-3" />
-        <h2 className="text-xl font-bold text-white mb-2">No Items to Checkout</h2>
-        <p className="text-sm text-slate-400 max-w-sm mb-6">
+      <div className="min-h-[50vh] flex flex-col items-center justify-center text-center p-8 sm:p-12 rounded-3xl border-2 border-dashed border-slate-200 bg-white shadow-sm">
+        <PackageCheck className="w-14 h-14 text-slate-300 mb-3" />
+        <h2 className="text-xl font-bold text-slate-900 mb-2">No Items to Checkout</h2>
+        <p className="text-sm text-slate-500 max-w-sm mb-6">
           Your shopping cart has no items. Please select products from the catalog before proceeding to checkout.
         </p>
         <Link
           to="/"
-          className="px-6 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-500"
+          className="px-8 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all"
         >
           Return to Storefront
         </Link>
@@ -192,26 +192,26 @@ export const Checkout = () => {
   const isAddressValid = shippingAddress.trim().length >= 10;
 
   return (
-    <div className="space-y-8 pb-16 max-w-5xl mx-auto">
+    <div className="space-y-6 sm:space-y-8 pb-16 max-w-5xl mx-auto">
       {/* Back button */}
       <div>
         <Link
           to="/cart"
-          className="inline-flex items-center gap-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-blue-600 transition-colors uppercase tracking-wider"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Cart
         </Link>
       </div>
 
       <div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Checkout & Shipping</h1>
-        <p className="text-sm text-slate-400 mt-1">Provide delivery details to complete your order</p>
+        <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Checkout & Shipping</h1>
+        <p className="text-sm text-slate-500 mt-0.5">Provide delivery details to complete your order</p>
       </div>
 
       {/* Error Alert */}
       {errorMsg && (
-        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-300 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-start gap-3 shadow-2xs">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-red-600" />
           <p className="leading-snug">{errorMsg}</p>
         </div>
       )}
@@ -221,14 +221,14 @@ export const Checkout = () => {
         <div className="lg:col-span-2 space-y-6">
           <form
             onSubmit={handleSubmitOrder}
-            className="p-6 sm:p-8 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-6"
+            className="p-6 sm:p-8 rounded-3xl bg-white border border-slate-100 shadow-xs space-y-6"
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-semibold text-white flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-indigo-400" /> Shipping & Delivery Address
+                <label className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-blue-600" /> Shipping & Delivery Address
                 </label>
-                <span className={`text-xs ${isAddressValid ? 'text-emerald-400' : 'text-slate-400'}`}>
+                <span className={`text-xs font-bold ${isAddressValid ? 'text-emerald-600' : 'text-slate-400'}`}>
                   {shippingAddress.trim().length}/10 chars min
                 </span>
               </div>
@@ -241,7 +241,7 @@ export const Checkout = () => {
                   if (errorMsg) setErrorMsg('');
                 }}
                 placeholder="Enter your complete delivery address (street, building/apt, city, state, zip code)..."
-                className="w-full bg-slate-950 text-sm text-white placeholder-slate-500 p-4 rounded-2xl border border-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none"
+                className="w-full bg-slate-50 text-sm text-slate-900 placeholder-slate-400 p-4 rounded-2xl border border-slate-200 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none shadow-2xs"
               />
               <p className="text-xs text-slate-400 mt-1.5">
                 Must be at least 10 characters long to ensure reliable delivery verification.
@@ -249,42 +249,42 @@ export const Checkout = () => {
             </div>
 
             {/* Razorpay Payment Method Box */}
-            <div className="pt-4 border-t border-slate-800/80 space-y-3">
+            <div className="pt-4 border-t border-slate-100 space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                  <CreditCard className="w-4 h-4 text-indigo-400" /> Payment Gateway
+                <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <CreditCard className="w-4 h-4 text-blue-600" /> Payment Gateway
                 </h3>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/30">
-                  <Lock className="w-3 h-3 text-indigo-400" /> Razorpay Test Mode (INR ₹)
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                  <Lock className="w-3.5 h-3.5 text-blue-600" /> Razorpay Test Mode (INR ₹)
                 </span>
               </div>
 
-              <div className="p-4 sm:p-5 rounded-2xl bg-indigo-950/20 border border-indigo-800/40 text-xs text-indigo-200 space-y-3">
+              <div className="p-5 rounded-2xl bg-blue-50/70 border border-blue-100 text-xs text-slate-700 space-y-3">
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
+                  <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-sm text-indigo-100">Cryptographically Verified Checkout</p>
-                    <p className="mt-0.5 text-slate-300 leading-relaxed">
+                    <p className="font-bold text-sm text-slate-900">Cryptographically Verified Checkout</p>
+                    <p className="mt-0.5 text-slate-600 leading-relaxed">
                       Transactions are processed in Indian Rupees (₹). Once authorized, the backend cryptographically
                       validates the HMAC-SHA256 signature before deducting live inventory.
                     </p>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-indigo-900/50 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400">
-                  <span className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Test Cards, UPI & Netbanking supported
+                <div className="pt-2 border-t border-blue-200/60 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600">
+                  <span className="flex items-center gap-1.5 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Test Cards, UPI & Netbanking supported
                   </span>
-                  <span className="text-indigo-400 font-medium">Zero KYC Required</span>
+                  <span className="text-blue-700 font-bold">Zero KYC Required</span>
                 </div>
               </div>
             </div>
 
-            {/* Razorpay Pay Button */}
+            {/* Pay Button */}
             <button
               type="submit"
               disabled={submitting || !isAddressValid}
-              className="w-full py-3.5 px-6 rounded-2xl font-semibold text-sm text-white bg-indigo-600 hover:bg-indigo-500 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all shadow-xl shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 px-6 rounded-full font-bold text-sm text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
             >
               {submitting ? (
                 <>
@@ -302,35 +302,37 @@ export const Checkout = () => {
         </div>
 
         {/* Right Col: Order Summary */}
-        <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-4">
-          <h2 className="text-base font-bold text-white tracking-tight">Order Items ({items.length})</h2>
+        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-xs space-y-4 sticky top-24">
+          <h2 className="text-xs font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-3">
+            Order Items ({items.length})
+          </h2>
 
           <div className="max-h-64 overflow-y-auto space-y-3 pr-1 scrollbar-thin">
             {items.map((item) => (
               <div key={item.id} className="flex items-center justify-between gap-3 text-xs">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium text-slate-200 truncate">{item.product.title}</p>
-                  <p className="text-slate-400">
+                  <p className="font-bold text-slate-900 truncate">{item.product.title}</p>
+                  <p className="text-slate-500">
                     {item.quantity} × {formatPrice(item.product.price)}
                   </p>
                 </div>
-                <span className="font-semibold text-white shrink-0">{formatPrice(item.subtotal)}</span>
+                <span className="font-black text-slate-900 shrink-0">{formatPrice(item.subtotal)}</span>
               </div>
             ))}
           </div>
 
-          <div className="pt-4 border-t border-slate-800 space-y-2 text-xs">
-            <div className="flex justify-between text-slate-400">
+          <div className="pt-4 border-t border-slate-100 space-y-2.5 text-xs">
+            <div className="flex justify-between text-slate-600">
               <span>Subtotal</span>
-              <span className="text-white">{formatPrice(totalAmount)}</span>
+              <span className="text-slate-900 font-bold">{formatPrice(totalAmount)}</span>
             </div>
-            <div className="flex justify-between text-slate-400">
-              <span>Shipping</span>
-              <span className="text-emerald-400 font-medium">Free</span>
+            <div className="flex justify-between text-slate-600">
+              <span>Delivery Charges</span>
+              <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full">FREE</span>
             </div>
-            <div className="pt-2 border-t border-slate-800 flex justify-between text-sm font-bold text-white">
-              <span>Total Amount</span>
-              <span className="text-indigo-400">{formatPrice(totalAmount)}</span>
+            <div className="pt-3 border-t border-slate-100 flex justify-between text-base font-black text-slate-900">
+              <span>Total Payable</span>
+              <span className="text-blue-600 text-xl">{formatPrice(totalAmount)}</span>
             </div>
           </div>
         </div>
@@ -338,67 +340,67 @@ export const Checkout = () => {
 
       {/* Offline / Test Mode Simulated Gateway Dialog */}
       {mockModalData && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white border border-slate-100 shadow-2xl p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
                   <Zap className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white">Razorpay Test Gateway</h3>
-                  <p className="text-xs text-slate-400">Simulated Payment Authorization</p>
+                  <h3 className="text-base font-bold text-slate-900">Razorpay Test Gateway</h3>
+                  <p className="text-xs text-slate-500">Simulated Payment Authorization</p>
                 </div>
               </div>
               <button
                 onClick={handleDismissMockModal}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-full hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 space-y-2.5 text-xs">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Razorpay Order ID:</span>
-                <code className="text-indigo-300 font-mono">{mockModalData.order_id}</code>
+                <span className="text-slate-500 font-medium">Razorpay Order ID:</span>
+                <code className="text-blue-600 font-mono font-bold">{mockModalData.order_id}</code>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Customer:</span>
-                <span className="text-slate-200">{mockModalData.customer_name || 'Valued Customer'}</span>
+                <span className="text-slate-500 font-medium">Customer:</span>
+                <span className="text-slate-900 font-semibold">{mockModalData.customer_name || 'Valued Customer'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Currency & Amount:</span>
-                <span className="font-bold text-emerald-400 text-sm">
+                <span className="text-slate-500 font-medium">Currency & Amount:</span>
+                <span className="font-black text-emerald-700 text-sm">
                   {formatPrice(mockModalData.amount_in_rupees)}
                 </span>
               </div>
             </div>
 
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               This simulated modal verifies atomic inventory deduction and cryptographic backend signature
               verification without requiring third-party network access.
             </p>
 
-            <div className="space-y-2 pt-2">
+            <div className="space-y-2.5 pt-2">
               <button
                 type="button"
                 onClick={handleSimulateMockSuccess}
-                className="w-full py-3 px-4 rounded-xl font-semibold text-xs text-white bg-emerald-600 hover:bg-emerald-500 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-600/20"
+                className="w-full py-3.5 px-4 rounded-full font-bold text-xs text-white bg-emerald-600 hover:bg-emerald-700 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98"
               >
                 <CheckCircle2 className="w-4 h-4" /> Simulate Successful Payment
               </button>
               <button
                 type="button"
                 onClick={handleSimulateMockFailure}
-                className="w-full py-2.5 px-4 rounded-xl font-medium text-xs text-rose-300 hover:bg-rose-500/10 border border-rose-500/20 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-2.5 px-4 rounded-full font-semibold text-xs text-red-600 hover:bg-red-50 border border-red-200 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <AlertCircle className="w-4 h-4" /> Simulate Declined Payment
               </button>
               <button
                 type="button"
                 onClick={handleDismissMockModal}
-                className="w-full py-2 px-4 rounded-xl font-medium text-xs text-slate-400 hover:text-white transition-colors"
+                className="w-full py-2 px-4 rounded-full font-medium text-xs text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
               >
                 Dismiss Modal (Keep Cart Intact)
               </button>
