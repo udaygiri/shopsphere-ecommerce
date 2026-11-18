@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   XCircle,
   ShoppingCart,
+  Heart,
   Loader2,
   Sparkles,
   ArrowUpDown,
@@ -15,12 +16,14 @@ import {
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import { formatPrice } from '../utils/currency';
 
 export const Storefront = () => {
   const { isAuthenticated, isAdmin, isSeller } = useAuth();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const { success, error: toastError, info } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -29,6 +32,7 @@ export const Storefront = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [addingId, setAddingId] = useState(null);
+  const [togglingId, setTogglingId] = useState(null);
 
   // Filters state
   const selectedCategory = searchParams.get('category') || '';
@@ -120,6 +124,37 @@ export const Storefront = () => {
       toastError(err.normalizedMessage || 'Failed to add item to cart');
     } finally {
       setAddingId(null);
+    }
+  };
+
+  // Toggle wishlist handler
+  const handleToggleWishlist = async (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isAuthenticated) {
+      info('Please sign in to save items to your wishlist');
+      navigate('/login');
+      return;
+    }
+
+    if (isSeller && !isAdmin) {
+      toastError('Sellers cannot create a wishlist. Please use a customer account.');
+      return;
+    }
+
+    setTogglingId(product.id);
+    try {
+      const added = await toggleWishlist(product.id);
+      if (added) {
+        success(`Added "${product.title}" to your wishlist!`);
+      } else {
+        success(`Removed "${product.title}" from your wishlist`);
+      }
+    } catch (err) {
+      toastError(err.normalizedMessage || 'Failed to update wishlist');
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -276,7 +311,7 @@ export const Storefront = () => {
                   )}
 
                   {/* Stock Badges */}
-                  <div className="absolute top-3 left-3 flex flex-col gap-1">
+                  <div className="absolute top-3 left-3 flex flex-col gap-1 pointer-events-none">
                     {isOutOfStock ? (
                       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-rose-950/90 text-rose-300 border border-rose-800/60 backdrop-blur-md">
                         <XCircle className="w-3 h-3" /> Out of Stock
@@ -291,6 +326,23 @@ export const Storefront = () => {
                       </span>
                     )}
                   </div>
+
+                  {/* Wishlist Heart Button */}
+                  <button
+                    type="button"
+                    onClick={(e) => handleToggleWishlist(e, product)}
+                    disabled={togglingId === product.id}
+                    className="absolute top-3 right-3 p-2 rounded-xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 hover:bg-slate-800 transition-all cursor-pointer shadow-lg z-10"
+                    title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Save to wishlist'}
+                  >
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${
+                        isInWishlist(product.id)
+                          ? 'text-rose-500 fill-rose-500'
+                          : 'text-slate-400 hover:text-rose-400'
+                      }`}
+                    />
+                  </button>
 
                   {/* Category Pill on Image */}
                   {product.category && (

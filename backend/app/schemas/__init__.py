@@ -21,6 +21,7 @@ from app.schemas.payment import (
     PaymentVerifyRequest,
     PaymentVerifyResponse,
 )
+from app.schemas.wishlist import WishlistItemResponse
 
 __all__ = [
     "UserCreate",
@@ -46,4 +47,5 @@ __all__ = [
     "PaymentOrderResponse",
     "PaymentVerifyRequest",
     "PaymentVerifyResponse",
+    "WishlistItemResponse",
 ]

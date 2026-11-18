@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   ShoppingCart,
+  Heart,
   PackageCheck,
   AlertTriangle,
   XCircle,
@@ -16,6 +17,7 @@ import {
 import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import { formatPrice } from '../utils/currency';
 
@@ -24,12 +26,14 @@ export const ProductDetail = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin, isSeller } = useAuth();
   const { addToCart } = useCart();
+  const { isInWishlist, toggleWishlist } = useWishlist();
   const { success, error: toastError, info } = useToast();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
+  const [togglingWishlist, setTogglingWishlist] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -81,6 +85,35 @@ export const ProductDetail = () => {
       toastError(err.normalizedMessage || 'Failed to add item to cart');
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleToggleWishlist = async () => {
+    if (!isAuthenticated) {
+      info('Please sign in to save items to your wishlist');
+      navigate('/login');
+      return;
+    }
+
+    if (isSeller && !isAdmin) {
+      toastError('Sellers cannot create a wishlist. Please use a customer account.');
+      return;
+    }
+
+    if (!product) return;
+
+    setTogglingWishlist(true);
+    try {
+      const added = await toggleWishlist(product.id);
+      if (added) {
+        success(`Added "${product.title}" to your wishlist!`);
+      } else {
+        success(`Removed "${product.title}" from your wishlist`);
+      }
+    } catch (err) {
+      toastError(err.normalizedMessage || 'Failed to update wishlist');
+    } finally {
+      setTogglingWishlist(false);
     }
   };
 
@@ -157,6 +190,23 @@ export const ProductDetail = () => {
               </span>
             )}
           </div>
+
+          {/* Floating Wishlist Button on Image */}
+          <button
+            type="button"
+            onClick={handleToggleWishlist}
+            disabled={togglingWishlist}
+            className="absolute top-4 right-4 p-3 rounded-2xl bg-slate-900/80 backdrop-blur-md border border-slate-700/60 hover:bg-slate-800 transition-all cursor-pointer shadow-xl z-10"
+            title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Save to wishlist'}
+          >
+            <Heart
+              className={`w-5 h-5 transition-colors ${
+                isInWishlist(product.id)
+                  ? 'text-rose-500 fill-rose-500'
+                  : 'text-slate-400 hover:text-rose-400'
+              }`}
+            />
+          </button>
         </div>
 
         {/* Right Column: Product Info & Actions */}
@@ -234,33 +284,49 @@ export const ProductDetail = () => {
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              disabled={isOutOfStock || adding}
-              className={`w-full py-3.5 px-6 rounded-2xl font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-xl cursor-pointer ${
-                isOutOfStock
-                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none'
-                  : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/25 active:scale-[0.99]'
-              }`}
-            >
-              {adding ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Adding to cart...
-                </>
-              ) : isOutOfStock ? (
-                <>
-                  <XCircle className="w-5 h-5" />
-                  Sold Out
-                </>
-              ) : (
-                <>
-                  <ShoppingCart className="w-5 h-5" />
-                  Add {quantity > 1 ? `${quantity} Items` : 'to Cart'} • {formatPrice(product.price * quantity)}
-                </>
-              )}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={isOutOfStock || adding}
+                className={`flex-1 py-3.5 px-6 rounded-2xl font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-xl cursor-pointer ${
+                  isOutOfStock
+                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none'
+                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/25 active:scale-[0.99]'
+                }`}
+              >
+                {adding ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Adding to cart...
+                  </>
+                ) : isOutOfStock ? (
+                  <>
+                    <XCircle className="w-5 h-5" />
+                    Sold Out
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-5 h-5" />
+                    Add {quantity > 1 ? `${quantity} Items` : 'to Cart'} • {formatPrice(product.price * quantity)}
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleToggleWishlist}
+                disabled={togglingWishlist}
+                className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-center ${
+                  isInWishlist(product.id)
+                    ? 'border-rose-500/50 bg-rose-500/10 text-rose-500 hover:bg-rose-500/20'
+                    : 'border-slate-800 bg-slate-900 text-slate-400 hover:text-white hover:border-slate-700 hover:bg-slate-800'
+                }`}
+                title={isInWishlist(product.id) ? 'Remove from wishlist' : 'Save to wishlist'}
+              >
+                <Heart className={`w-5 h-5 ${isInWishlist(product.id) ? 'fill-rose-500' : ''}`} />
+              </button>
+            </div>
           </div>
 
           {/* Guarantees */}

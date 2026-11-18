@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from app.models.product import Product
     from app.models.cart import Cart
     from app.models.order import Order
+    from app.models.wishlist import WishlistItem
 
 
 class UserRole(str, enum.Enum):
@@ -60,6 +61,13 @@ class User(Base):
     # One customer has many orders
     orders: Mapped[list["Order"]] = relationship(
         "Order",
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
+
+    # One user has many wishlist items
+    wishlist_items: Mapped[list["WishlistItem"]] = relationship(
+        "WishlistItem",
         back_populates="user",
         cascade="all, delete-orphan",
     )
