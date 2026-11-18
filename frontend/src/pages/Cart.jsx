@@ -15,6 +15,7 @@ import {
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const Cart = () => {
   const { cart, loading, updateQuantity, removeFromCart, clearCart } = useCart();
@@ -197,7 +198,7 @@ export const Cart = () => {
                         {product.title}
                       </Link>
                       <div className="text-xs text-slate-400 mt-1 flex items-center gap-2">
-                        <span>Unit: ${Number(product.price).toFixed(2)}</span>
+                        <span>Unit: {formatPrice(product.price)}</span>
                         <span>•</span>
                         <span className={product.stock <= 5 ? 'text-amber-400 font-semibold' : 'text-emerald-400'}>
                           {product.stock} in stock
@@ -232,7 +233,7 @@ export const Cart = () => {
 
                     <div className="text-right min-w-[70px]">
                       <span className="text-base font-bold text-white tracking-tight">
-                        ${Number(item.subtotal).toFixed(2)}
+                        {formatPrice(item.subtotal)}
                       </span>
                     </div>
 
@@ -271,7 +272,7 @@ export const Cart = () => {
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Subtotal</span>
-                <span className="text-white font-medium">${Number(cart?.total_price || 0).toFixed(2)}</span>
+                <span className="text-white font-medium">{formatPrice(cart?.total_price)}</span>
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Standard Shipping</span>
@@ -279,12 +280,12 @@ export const Cart = () => {
               </div>
               <div className="flex justify-between text-slate-400">
                 <span>Estimated Tax</span>
-                <span className="text-white font-medium">$0.00</span>
+                <span className="text-white font-medium">₹0.00</span>
               </div>
 
               <div className="pt-3 border-t border-slate-800 flex justify-between text-base font-bold text-white">
                 <span>Order Total</span>
-                <span className="text-indigo-400">${Number(cart?.total_price || 0).toFixed(2)}</span>
+                <span className="text-indigo-400">{formatPrice(cart?.total_price)}</span>
               </div>
             </div>
 

@@ -17,6 +17,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const ProductDetail = () => {
   const { id } = useParams();
@@ -182,7 +183,7 @@ export const ProductDetail = () => {
           {/* Price */}
           <div className="p-4 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-baseline gap-3">
             <span className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              ${Number(product.price).toFixed(2)}
+              {formatPrice(product.price)}
             </span>
             <span className="text-xs text-slate-400">Per unit / Taxes included</span>
           </div>
@@ -227,7 +228,7 @@ export const ProductDetail = () => {
                     </button>
                   </div>
                   <span className="text-xs text-slate-400">
-                    Subtotal: <strong className="text-white">${(product.price * quantity).toFixed(2)}</strong>
+                    Subtotal: <strong className="text-white">{formatPrice(product.price * quantity)}</strong>
                   </span>
                 </div>
               </div>
@@ -256,7 +257,7 @@ export const ProductDetail = () => {
               ) : (
                 <>
                   <ShoppingCart className="w-5 h-5" />
-                  Add {quantity > 1 ? `${quantity} Items` : 'to Cart'} • ${(product.price * quantity).toFixed(2)}
+                  Add {quantity > 1 ? `${quantity} Items` : 'to Cart'} • {formatPrice(product.price * quantity)}
                 </>
               )}
             </button>

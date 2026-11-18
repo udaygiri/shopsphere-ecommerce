@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const MyOrders = () => {
   const { error: toastError } = useToast();
@@ -161,7 +162,7 @@ export const MyOrders = () => {
                     <div>
                       <span className="text-xs text-slate-400 block">Total Amount</span>
                       <span className="text-lg font-extrabold text-white">
-                        ${Number(order.total_amount).toFixed(2)}
+                        {formatPrice(order.total_amount)}
                       </span>
                     </div>
 
@@ -206,12 +207,12 @@ export const MyOrders = () => {
                               <div className="min-w-0">
                                 <p className="font-medium text-slate-200 truncate">{item.product_title}</p>
                                 <p className="text-xs text-slate-400">
-                                  Qty: {item.quantity} × ${Number(item.unit_price).toFixed(2)} snapshot
+                                  Qty: {item.quantity} × {formatPrice(item.unit_price)} snapshot
                                 </p>
                               </div>
                             </div>
                             <span className="font-bold text-white shrink-0">
-                              ${Number(item.subtotal).toFixed(2)}
+                              {formatPrice(item.subtotal)}
                             </span>
                           </div>
                         ))}

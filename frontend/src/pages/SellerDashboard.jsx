@@ -15,6 +15,7 @@ import {
 import api from '../api/client';
 import { uploadImageToCloudinary } from '../api/cloudinary';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const SellerDashboard = () => {
   const { success, error: toastError, info } = useToast();
@@ -377,7 +378,7 @@ export const SellerDashboard = () => {
 
                       <div className="mt-5 pt-4 border-t border-slate-800/80 flex items-center justify-between">
                         <span className="text-lg font-bold text-white">
-                          ${Number(product.price).toFixed(2)}
+                          {formatPrice(product.price)}
                         </span>
 
                         <div className="flex items-center gap-2">
@@ -485,10 +486,10 @@ export const SellerDashboard = () => {
                             <div>
                               <p className="font-semibold text-white">{item.product_title}</p>
                               <p className="text-slate-400">
-                                {item.quantity} units × ${Number(item.unit_price).toFixed(2)}
+                                {item.quantity} units × {formatPrice(item.unit_price)}
                               </p>
                             </div>
-                            <span className="font-bold text-white">${Number(item.subtotal).toFixed(2)}</span>
+                            <span className="font-bold text-white">{formatPrice(item.subtotal)}</span>
                           </div>
                         ))}
                       </div>
@@ -556,7 +557,7 @@ export const SellerDashboard = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
-                    Price ($ USD) *
+                    Price (₹ INR) *
                   </label>
                   <input
                     type="number"
@@ -565,7 +566,7 @@ export const SellerDashboard = () => {
                     required
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
-                    placeholder="29.99"
+                    placeholder="499.00"
                     className="w-full bg-slate-950 text-sm text-white px-3.5 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-indigo-500"
                   />
                 </div>

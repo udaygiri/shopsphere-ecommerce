@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import api from '../api/client';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const AdminDashboard = () => {
   const { success, error: toastError } = useToast();
@@ -472,7 +473,7 @@ export const AdminDashboard = () => {
                         <div>
                           <span className="text-xs text-slate-500 block">Price</span>
                           <span className="text-lg font-bold text-white">
-                            ${Number(product.price).toFixed(2)}
+                            {formatPrice(product.price)}
                           </span>
                         </div>
 

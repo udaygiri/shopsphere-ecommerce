@@ -16,6 +16,7 @@ import api from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const Storefront = () => {
   const { user, isAuthenticated, isCustomer, isAdmin, isSeller } = useAuth();
@@ -320,7 +321,7 @@ export const Storefront = () => {
                     <div>
                       <span className="text-xs text-slate-500 block">Price</span>
                       <span className="text-lg font-bold text-white tracking-tight">
-                        ${Number(product.price).toFixed(2)}
+                        {formatPrice(product.price)}
                       </span>
                     </div>
 

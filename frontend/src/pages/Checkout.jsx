@@ -13,6 +13,7 @@ import {
 import api from '../api/client';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { formatPrice } from '../utils/currency';
 
 export const Checkout = () => {
   const { cart, fetchCart } = useCart();
@@ -170,7 +171,7 @@ export const Checkout = () => {
                 </>
               ) : (
                 <>
-                  <span>Place Order (${Number(totalAmount).toFixed(2)})</span>
+                  <span>Place Order ({formatPrice(totalAmount)})</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
@@ -188,11 +189,11 @@ export const Checkout = () => {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-slate-200 truncate">{item.product.title}</p>
                   <p className="text-slate-400">
-                    {item.quantity} × ${Number(item.product.price).toFixed(2)}
+                    {item.quantity} × {formatPrice(item.product.price)}
                   </p>
                 </div>
                 <span className="font-semibold text-white shrink-0">
-                  ${Number(item.subtotal).toFixed(2)}
+                  {formatPrice(item.subtotal)}
                 </span>
               </div>
             ))}
@@ -201,7 +202,7 @@ export const Checkout = () => {
           <div className="pt-4 border-t border-slate-800 space-y-2 text-xs">
             <div className="flex justify-between text-slate-400">
               <span>Subtotal</span>
-              <span className="text-white">${Number(totalAmount).toFixed(2)}</span>
+              <span className="text-white">{formatPrice(totalAmount)}</span>
             </div>
             <div className="flex justify-between text-slate-400">
               <span>Shipping</span>
@@ -209,7 +210,7 @@ export const Checkout = () => {
             </div>
             <div className="pt-2 border-t border-slate-800 flex justify-between text-sm font-bold text-white">
               <span>Total</span>
-              <span className="text-indigo-400">${Number(totalAmount).toFixed(2)}</span>
+              <span className="text-indigo-400">{formatPrice(totalAmount)}</span>
             </div>
           </div>
         </div>
