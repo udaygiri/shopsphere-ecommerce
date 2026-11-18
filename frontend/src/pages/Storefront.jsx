@@ -19,7 +19,7 @@ import { useToast } from '../context/ToastContext';
 import { formatPrice } from '../utils/currency';
 
 export const Storefront = () => {
-  const { user, isAuthenticated, isCustomer, isAdmin, isSeller } = useAuth();
+  const { isAuthenticated, isAdmin, isSeller } = useAuth();
   const { addToCart } = useCart();
   const { success, error: toastError, info } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();

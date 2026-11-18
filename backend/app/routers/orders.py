@@ -5,7 +5,6 @@ from sqlalchemy.orm import Session, selectinload, joinedload
 from app.core.database import get_db
 from app.core.deps import get_current_user, require_role
 from app.models.user import User, UserRole
-from app.models.product import Product
 from app.models.cart import Cart, CartItem
 from app.models.order import Order, OrderItem, OrderStatus
 from app.schemas.order import (

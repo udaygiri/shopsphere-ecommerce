@@ -22,7 +22,7 @@ import { formatPrice } from '../utils/currency';
 export const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, isCustomer, isAdmin, isSeller } = useAuth();
+  const { isAuthenticated, isAdmin, isSeller } = useAuth();
   const { addToCart } = useCart();
   const { success, error: toastError, info } = useToast();
 
