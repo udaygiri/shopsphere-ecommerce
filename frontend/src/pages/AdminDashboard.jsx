@@ -11,6 +11,15 @@ import {
   Eye,
   EyeOff,
   Search,
+  BarChart3,
+  TrendingUp,
+  ShoppingBag,
+  Users,
+  CheckCircle2,
+  Clock,
+  Truck,
+  AlertCircle,
+  IndianRupee,
 } from 'lucide-react';
 import api from '../api/client';
 import { useToast } from '../context/ToastContext';
@@ -18,7 +27,19 @@ import { formatPrice } from '../utils/currency';
 
 export const AdminDashboard = () => {
   const { success, error: toastError } = useToast();
-  const [activeTab, setActiveTab] = useState('categories'); // 'categories' | 'products'
+  const [activeTab, setActiveTab] = useState('orders'); // 'orders' | 'categories' | 'products'
+
+  // Orders & Analytics State
+  const [stats, setStats] = useState({
+    total_sales: 0,
+    total_orders: 0,
+    total_products: 0,
+    total_users: 0,
+  });
+  const [orders, setOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderSearch, setOrderSearch] = useState('');
+  const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
   // Categories State
   const [categories, setCategories] = useState([]);
@@ -60,13 +81,51 @@ export const AdminDashboard = () => {
     }
   };
 
+  // 3. Fetch Admin Analytics Stats and All Platform Orders
+  const fetchAdminStatsAndOrders = async () => {
+    setLoadingOrders(true);
+    try {
+      const [statsRes, ordersRes] = await Promise.all([
+        api.get('/orders/admin/stats'),
+        api.get('/orders/admin/all'),
+      ]);
+      setStats(statsRes.data);
+      setOrders(ordersRes.data);
+    } catch (err) {
+      toastError(err.normalizedMessage || 'Failed to fetch admin stats and orders');
+    } finally {
+      setLoadingOrders(false);
+    }
+  };
+
   useEffect(() => {
-    if (activeTab === 'categories') {
+    if (activeTab === 'orders') {
+      fetchAdminStatsAndOrders();
+    } else if (activeTab === 'categories') {
       fetchCategories();
-    } else {
+    } else if (activeTab === 'products') {
       fetchProducts();
     }
   }, [activeTab]);
+
+  // Handle Admin Order Status Update
+  const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    setUpdatingOrderId(orderId);
+    try {
+      const res = await api.patch(`/orders/${orderId}/status`, { status: newStatus });
+      success(`Order #${orderId} status updated to ${newStatus}`);
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: res.data.status } : o))
+      );
+      // Refresh analytics stats
+      const statsRes = await api.get('/orders/admin/stats');
+      setStats(statsRes.data);
+    } catch (err) {
+      toastError(err.normalizedMessage || 'Failed to update order status');
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
 
   // Helper to preview slug matching backend logic
   const generatePreviewSlug = (text) => {
@@ -169,6 +228,35 @@ export const AdminDashboard = () => {
     return titleMatch || sellerMatch || catMatch;
   });
 
+  // Filter orders by ID, customer name, email, or status
+  const filteredOrders = orders.filter((o) => {
+    if (!orderSearch.trim()) return true;
+    const term = orderSearch.toLowerCase();
+    const idMatch = o.id.toString().includes(term);
+    const userMatch =
+      o.user_name?.toLowerCase().includes(term) ||
+      o.user_email?.toLowerCase().includes(term);
+    const statusMatch = o.status?.toLowerCase().includes(term);
+    const addressMatch = o.shipping_address?.toLowerCase().includes(term);
+    return idMatch || userMatch || statusMatch || addressMatch;
+  });
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'DELIVERED':
+        return 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60';
+      case 'SHIPPED':
+        return 'bg-indigo-950/80 text-indigo-300 border-indigo-800/60';
+      case 'PROCESSING':
+        return 'bg-blue-950/80 text-blue-300 border-blue-800/60';
+      case 'CANCELLED':
+        return 'bg-rose-950/80 text-rose-300 border-rose-800/60';
+      case 'PENDING':
+      default:
+        return 'bg-amber-950/80 text-amber-300 border-amber-800/60';
+    }
+  };
+
   return (
     <div className="space-y-8 pb-16">
       
@@ -184,17 +272,30 @@ export const AdminDashboard = () => {
             System Administration
           </h1>
           <p className="text-sm text-slate-400">
-            Category taxonomy management and platform-wide seller products oversight
+            Platform revenue analytics, global orders control, categories taxonomy, and catalog oversight
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800/80 pb-px">
+      <div className="flex items-center gap-2 border-b border-slate-800/80 pb-px overflow-x-auto scrollbar-thin">
+        <button
+          type="button"
+          onClick={() => setActiveTab('orders')}
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
+            activeTab === 'orders'
+              ? 'border-indigo-500 text-white'
+              : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4 text-amber-400" />
+          <span>Orders & Analytics ({orders.length})</span>
+        </button>
+
         <button
           type="button"
           onClick={() => setActiveTab('categories')}
-          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'categories'
               ? 'border-indigo-500 text-white'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
@@ -207,7 +308,7 @@ export const AdminDashboard = () => {
         <button
           type="button"
           onClick={() => setActiveTab('products')}
-          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+          className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer whitespace-nowrap ${
             activeTab === 'products'
               ? 'border-indigo-500 text-white'
               : 'border-transparent text-slate-400 hover:text-slate-200 hover:border-slate-700'
@@ -217,6 +318,235 @@ export const AdminDashboard = () => {
           <span>All Salesmen Products ({products.length})</span>
         </button>
       </div>
+
+      {/* TAB: Orders & Analytics */}
+      {activeTab === 'orders' && (
+        <div className="space-y-8">
+          {/* Summary Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {/* Total Platform Sales */}
+            <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl relative overflow-hidden group">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Sales</span>
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/5">
+                  <TrendingUp className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {formatPrice(stats.total_sales)}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  Paid orders platform revenue
+                </p>
+              </div>
+            </div>
+
+            {/* Total Orders */}
+            <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl relative overflow-hidden group">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Orders</span>
+                <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-500/5">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {stats.total_orders}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                  All platform checkouts
+                </p>
+              </div>
+            </div>
+
+            {/* Platform Products */}
+            <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl relative overflow-hidden group">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Platform Products</span>
+                <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center shadow-lg shadow-amber-500/5">
+                  <Package className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {stats.total_products}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  Active catalog listings
+                </p>
+              </div>
+            </div>
+
+            {/* Registered Users */}
+            <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl relative overflow-hidden group">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Platform Users</span>
+                <div className="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shadow-lg shadow-cyan-500/5">
+                  <Users className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                  {stats.total_users}
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  Customers, sellers & admins
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* All Platform Orders Oversight */}
+          <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-indigo-400" />
+                  All Platform Orders
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Global orders oversight across all sellers and direct status control
+                </p>
+              </div>
+
+              {/* Order Search */}
+              <div className="relative w-full sm:w-72">
+                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
+                <input
+                  type="text"
+                  value={orderSearch}
+                  onChange={(e) => setOrderSearch(e.target.value)}
+                  placeholder="Search by ID, customer, status..."
+                  className="w-full bg-slate-950 text-xs text-white placeholder-slate-500 pl-9 pr-4 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-indigo-500"
+                />
+              </div>
+            </div>
+
+            {loadingOrders ? (
+              <div className="py-16 flex flex-col items-center justify-center gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+                <p className="text-sm text-slate-400">Loading platform orders and analytics...</p>
+              </div>
+            ) : filteredOrders.length === 0 ? (
+              <div className="py-16 text-center">
+                <ShoppingBag className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <h3 className="text-base font-bold text-slate-200">No orders found</h3>
+                <p className="text-xs text-slate-400 mt-1">
+                  {orderSearch ? 'No orders match your search criteria.' : 'No orders have been placed on the platform yet.'}
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto scrollbar-thin">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider font-semibold">
+                      <th className="py-3 px-4">Order ID & Date</th>
+                      <th className="py-3 px-4">Customer</th>
+                      <th className="py-3 px-4">Items</th>
+                      <th className="py-3 px-4">Total</th>
+                      <th className="py-3 px-4">Payment</th>
+                      <th className="py-3 px-4">Order Status & Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-800/60 text-slate-300">
+                    {filteredOrders.map((order) => {
+                      const isUpdating = updatingOrderId === order.id;
+                      const isPaid = Boolean(order.razorpay_payment_id);
+
+                      return (
+                        <tr key={order.id} className="hover:bg-slate-800/30 transition-colors">
+                          <td className="py-3.5 px-4">
+                            <span className="font-bold text-white block">#{order.id}</span>
+                            <span className="text-[11px] text-slate-500">
+                              {new Date(order.created_at).toLocaleDateString(undefined, {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <span className="font-semibold text-slate-100 block truncate max-w-[160px]">
+                              {order.user_name || 'Customer'}
+                            </span>
+                            <span className="text-[11px] text-slate-400 block truncate max-w-[160px]">
+                              {order.user_email || `User #${order.user_id}`}
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <span className="text-slate-200 font-medium">
+                              {order.items?.length || 0} {order.items?.length === 1 ? 'item' : 'items'}
+                            </span>
+                            {order.items?.[0] && (
+                              <span className="text-[11px] text-slate-400 block truncate max-w-[180px]">
+                                {order.items[0].product_title || 'Product'}
+                                {order.items.length > 1 && ` +${order.items.length - 1} more`}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <span className="font-bold text-white text-sm">
+                              {formatPrice(order.total_amount)}
+                            </span>
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            {isPaid ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-emerald-950/80 text-emerald-300 border border-emerald-800/60">
+                                <CheckCircle2 className="w-3 h-3" />
+                                Paid
+                              </span>
+                            ) : order.status === 'CANCELLED' ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-800/60">
+                                Cancelled
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-800 text-slate-300 border border-slate-700/60">
+                                Pending / COD
+                              </span>
+                            )}
+                            {order.razorpay_payment_id && (
+                              <span className="text-[10px] text-slate-500 block truncate max-w-[120px] mt-0.5" title={order.razorpay_payment_id}>
+                                {order.razorpay_payment_id}
+                              </span>
+                            )}
+                          </td>
+
+                          <td className="py-3.5 px-4">
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={order.status}
+                                disabled={isUpdating}
+                                onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                                className={`px-2.5 py-1.5 rounded-xl text-xs font-semibold uppercase tracking-wider border focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer ${getStatusBadge(order.status)}`}
+                              >
+                                <option value="PENDING" className="bg-slate-900 text-amber-300">Pending</option>
+                                <option value="PROCESSING" className="bg-slate-900 text-blue-300">Processing</option>
+                                <option value="SHIPPED" className="bg-slate-900 text-indigo-300">Shipped</option>
+                                <option value="DELIVERED" className="bg-slate-900 text-emerald-300">Delivered</option>
+                                <option value="CANCELLED" className="bg-slate-900 text-rose-300">Cancelled</option>
+                              </select>
+                              {isUpdating && <Loader2 className="w-3.5 h-3.5 animate-spin text-indigo-400" />}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: Categories Management */}
       {activeTab === 'categories' && (
