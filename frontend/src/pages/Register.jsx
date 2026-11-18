@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, UserPlus, Loader2, Store, ShoppingCart, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, UserPlus, Loader2, Store, ShoppingCart, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -48,6 +48,8 @@ export const Register = () => {
       success(`Account created successfully! Welcome, ${user.full_name || 'User'}!`);
       if (user.role?.toUpperCase() === 'SELLER') {
         navigate('/seller/dashboard');
+      } else if (user.role?.toUpperCase() === 'ADMIN') {
+        navigate('/admin/dashboard');
       } else {
         navigate('/');
       }
@@ -62,7 +64,7 @@ export const Register = () => {
 
   return (
     <div className="min-h-[75vh] flex items-center justify-center py-10 px-4">
-      <div className="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
+      <div className="w-full max-w-lg bg-slate-900/90 border border-slate-800 rounded-3xl p-8 shadow-2xl backdrop-blur-xl">
         
         {/* Header */}
         <div className="text-center mb-8">
@@ -70,7 +72,7 @@ export const Register = () => {
             <UserPlus className="w-6 h-6" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Create an Account</h1>
-          <p className="text-sm text-slate-400 mt-1">Join ShopSphere as a Customer or Seller</p>
+          <p className="text-sm text-slate-400 mt-1">Select your account role and enter your details</p>
         </div>
 
         {/* Error Alert */}
@@ -89,7 +91,7 @@ export const Register = () => {
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
               Select Your Role
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <button
                 type="button"
                 onClick={() => handleRoleSelect('CUSTOMER')}
@@ -100,8 +102,8 @@ export const Register = () => {
                 }`}
               >
                 <ShoppingCart className="w-5 h-5 mb-1 text-indigo-400" />
-                <span className="text-sm font-semibold">Customer</span>
-                <span className="text-[10px] text-slate-400">Shop & Buy</span>
+                <span className="text-xs sm:text-sm font-semibold">Customer</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-400">Shop & Buy</span>
               </button>
 
               <button
@@ -114,8 +116,22 @@ export const Register = () => {
                 }`}
               >
                 <Store className="w-5 h-5 mb-1 text-emerald-400" />
-                <span className="text-sm font-semibold">Seller</span>
-                <span className="text-[10px] text-slate-400">Sell & Manage</span>
+                <span className="text-xs sm:text-sm font-semibold">Seller</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-400">Sell Products</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleRoleSelect('ADMIN')}
+                className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all cursor-pointer ${
+                  formData.role === 'ADMIN'
+                    ? 'bg-amber-600/20 border-amber-500 text-white shadow-md shadow-amber-600/10'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                }`}
+              >
+                <ShieldCheck className="w-5 h-5 mb-1 text-amber-400" />
+                <span className="text-xs sm:text-sm font-semibold">Admin</span>
+                <span className="text-[9px] sm:text-[10px] text-slate-400">Oversight</span>
               </button>
             </div>
           </div>
