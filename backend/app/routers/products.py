@@ -34,6 +34,25 @@ def get_my_products(
 
 
 # -----------------------------------------------------------------------------
+# 1b. Admin All Products (Across all sellers with salesman details)
+# -----------------------------------------------------------------------------
+@router.get("/admin/all", response_model=list[ProductResponse])
+def get_all_products_admin(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN])),
+):
+    """
+    Admin-only endpoint:
+    Returns all products from all salesmen/sellers across the entire platform,
+    including active and inactive items, with salesman details.
+    """
+    products = db.scalars(
+        select(Product).order_by(Product.created_at.desc())
+    ).all()
+    return products
+
+
+# -----------------------------------------------------------------------------
 # 2. Public Storefront Catalog (Browse, Filter, Search, Paginate)
 # -----------------------------------------------------------------------------
 @router.get("", response_model=list[ProductResponse])

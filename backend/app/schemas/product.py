@@ -3,6 +3,14 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.schemas.category import CategoryResponse
 
 
+class SellerPreview(BaseModel):
+    id: int
+    email: str
+    full_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class ProductBase(BaseModel):
     title: str = Field(..., min_length=2, max_length=255, description="Product title")
     description: str | None = Field(default=None, max_length=5000, description="Detailed product description")
@@ -40,5 +48,6 @@ class ProductResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     category: CategoryResponse | None = None
+    seller: SellerPreview | None = None
 
     model_config = ConfigDict(from_attributes=True)

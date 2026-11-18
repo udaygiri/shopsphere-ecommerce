@@ -54,4 +54,5 @@ class Product(Base):
     seller: Mapped["User"] = relationship(
         "User",
         back_populates="products",
+        lazy="joined",
     )

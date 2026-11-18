@@ -1,5 +1,5 @@
 import re
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -62,3 +62,25 @@ def create_category(
     db.commit()
     db.refresh(category)
     return category
+
+
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_category(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_role([UserRole.ADMIN])),
+):
+    """
+    Admin-only endpoint: Permanently delete a product category by ID.
+    Cascade will automatically delete or disassociate linked products.
+    """
+    category = db.scalar(select(Category).where(Category.id == id))
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Category with ID {id} not found",
+        )
+
+    db.delete(category)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
