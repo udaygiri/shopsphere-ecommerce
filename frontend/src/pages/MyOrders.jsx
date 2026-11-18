@@ -12,6 +12,8 @@ import {
   ShoppingBag,
   ChevronDown,
   ChevronUp,
+  ShieldCheck,
+  CreditCard,
 } from 'lucide-react';
 import api from '../api/client';
 import { useToast } from '../context/ToastContext';
@@ -147,9 +149,15 @@ export const MyOrders = () => {
                     </div>
 
                     <div>
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-wrap items-center gap-2.5">
                         <span className="font-bold text-white text-base">Order #{order.id}</span>
                         {getStatusBadge(order.status)}
+                        {order.razorpay_payment_id && (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                            <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                            <span>Paid via Razorpay</span>
+                          </span>
+                        )}
                       </div>
                       <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
                         <Calendar className="w-3.5 h-3.5" />
@@ -188,6 +196,21 @@ export const MyOrders = () => {
                         <span className="text-slate-400">{order.shipping_address}</span>
                       </div>
                     </div>
+
+                    {/* Payment Gateway Reference */}
+                    {order.razorpay_payment_id && (
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800/60 text-xs">
+                        <div className="flex items-center gap-2 text-slate-300">
+                          <CreditCard className="w-4 h-4 text-indigo-400" />
+                          <span className="text-slate-400">Payment Gateway:</span>
+                          <span className="font-semibold text-white">Razorpay (Test Mode INR ₹)</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 font-mono text-[11px] text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                          <span className="text-slate-400 font-sans">Payment ID:</span>
+                          <span>{order.razorpay_payment_id}</span>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Items List */}
                     <div className="space-y-2">

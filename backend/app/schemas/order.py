@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 from app.models.order import OrderStatus
 
@@ -33,6 +34,8 @@ class OrderResponse(BaseModel):
     total_amount: float
     status: OrderStatus
     shipping_address: str
+    razorpay_order_id: Optional[str] = None
+    razorpay_payment_id: Optional[str] = None
     items: list[OrderItemResponse]
     created_at: datetime
     updated_at: datetime

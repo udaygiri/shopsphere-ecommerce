@@ -15,6 +15,12 @@ from app.schemas.order import (
     OrderStatusUpdate,
     OrderResponse,
 )
+from app.schemas.payment import (
+    PaymentOrderCreate,
+    PaymentOrderResponse,
+    PaymentVerifyRequest,
+    PaymentVerifyResponse,
+)
 
 __all__ = [
     "UserCreate",
@@ -36,4 +42,8 @@ __all__ = [
     "OrderItemResponse",
     "OrderStatusUpdate",
     "OrderResponse",
+    "PaymentOrderCreate",
+    "PaymentOrderResponse",
+    "PaymentVerifyRequest",
+    "PaymentVerifyResponse",
 ]

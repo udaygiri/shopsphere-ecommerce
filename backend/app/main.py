@@ -2,18 +2,29 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, inspect
 
 from app.core.config import settings
 from app.core.database import engine, Base, get_db
 import app.models  # Ensures models are registered with Base metadata
-from app.routers import auth, categories, products, cart, orders
+from app.routers import auth, categories, products, cart, orders, payments
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Auto-create tables on startup (convenient for local dev & SQLite)
     Base.metadata.create_all(bind=engine)
+    try:
+        with engine.connect() as conn:
+            inspector = inspect(engine)
+            order_cols = [c["name"] for c in inspector.get_columns("orders")]
+            if "razorpay_order_id" not in order_cols:
+                conn.execute(text("ALTER TABLE orders ADD COLUMN razorpay_order_id VARCHAR(100)"))
+            if "razorpay_payment_id" not in order_cols:
+                conn.execute(text("ALTER TABLE orders ADD COLUMN razorpay_payment_id VARCHAR(100)"))
+            conn.commit()
+    except Exception:
+        pass
     yield
 
 
@@ -47,6 +58,7 @@ app.include_router(categories.router, prefix="/api/categories", tags=["Categorie
 app.include_router(products.router, prefix="/api/products", tags=["Products"])
 app.include_router(cart.router, prefix="/api/cart", tags=["Cart"])
 app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
+app.include_router(payments.router, prefix="/api/payments", tags=["Payments"])
 
 
 @app.get("/")
